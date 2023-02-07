@@ -32,9 +32,9 @@ export class AgendamientoController {
     return this.agendamientoService.findAll(paginationDto);
   }
 
-  @Get('searchById/:term')
+  @Get('searchByCI/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOne(@Param('term', ParseUUIDPipe) term: string) {
+  findOne(@Param('term') term: string) {
     return this.agendamientoService.findOne(term);
   }
 

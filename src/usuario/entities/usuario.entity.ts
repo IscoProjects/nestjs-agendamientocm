@@ -1,4 +1,6 @@
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
+import { Polivalente } from '../../polivalente/entities/polivalente.entity';
+import { ManyToOne } from 'typeorm';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -12,6 +14,11 @@ import {
 export class Usuario {
   @PrimaryGeneratedColumn('uuid')
   id_usuario: string;
+
+  @ManyToOne(() => Polivalente, (polivalente) => polivalente.usuario, {
+    onDelete: 'CASCADE',
+  })
+  polivalente: Polivalente;
 
   @Column({
     type: 'text',
@@ -49,12 +56,6 @@ export class Usuario {
     type: 'text',
     nullable: false,
   })
-  us_strabajo: string;
-
-  @Column({
-    type: 'text',
-    nullable: false,
-  })
   us_telefono: string;
 
   @Column({
@@ -62,12 +63,6 @@ export class Usuario {
     nullable: false,
   })
   us_fecha_nac: Date;
-
-  @Column({
-    type: 'text',
-    nullable: false,
-  })
-  us_role: string;
 
   @Column({
     type: 'text',
@@ -82,6 +77,12 @@ export class Usuario {
     select: false,
   })
   us_password: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  us_role: string;
 
   @OneToMany(() => Agendamiento, (agendamiento) => agendamiento.usuario, {
     nullable: false,

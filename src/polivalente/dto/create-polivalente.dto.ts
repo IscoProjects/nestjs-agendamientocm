@@ -1,11 +1,12 @@
-import { IsBoolean, IsString } from 'class-validator';
-
+import { IsBoolean, IsString, IsUUID } from 'class-validator';
+import { Seccion } from '../../seccion/entities/seccion.entity';
 export class CreatePolivalenteDto {
   @IsString()
-  nro_polivalente: string;
+  @IsUUID()
+  seccion: Seccion;
 
   @IsString()
-  area_polivalente: string;
+  pol_descripcion: string;
 
   @IsBoolean()
   isAvailible: boolean;

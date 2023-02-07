@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Repository } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
+// import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class AgendamientoService {
@@ -36,37 +37,61 @@ export class AgendamientoService {
       relations: {
         usuario: true,
         paciente: true,
-        polivalente: true,
       },
     });
 
     return agendamiento.map((agendamiento) => ({
       ...agendamiento,
-      polivalente: agendamiento.polivalente,
     }));
   }
 
   async findOne(term: string) {
-    const agendamiento: Agendamiento =
-      await this.agendamientoRepository.findOne({
-        where: {
-          id_agendamiento: term,
+    // let agendamiento: Agendamiento;
+    // if (isUUID(term)) {
+    //   agendamiento = await this.agendamientoRepository.findOne({
+    //     where: {
+    //       id_agendamiento: term,
+    //     },
+    //     relations: {
+    //       usuario: true,
+    //       paciente: true,
+    //       polivalente: true,
+    //     },
+    //   });
+    // } else {
+    // const queryBuilder =
+    //   this.agendamientoRepository.createQueryBuilder('agendamiento');
+    // agendamiento = await queryBuilder
+    //   .leftJoinAndSelect('agendamiento.paciente', 'paciente')
+    //   .leftJoinAndSelect('agendamiento.polivalente', 'polivalente')
+    //   .leftJoinAndSelect('agendamiento.usuario', 'usuario')
+    //   .where('pac_cedula=:pac_cedula', {
+    //     pac_cedula: term,
+    //   })
+    //   .getOne();
+
+    const agendamiento = await this.agendamientoRepository.find({
+      relations: {
+        usuario: true,
+        paciente: true,
+      },
+      where: {
+        paciente: {
+          pac_cedula: term,
         },
-        relations: {
-          usuario: true,
-          paciente: true,
-          polivalente: true,
-        },
-      });
+      },
+    });
 
     if (!agendamiento)
-      throw new NotFoundException(`Agendamiento con ID: ${term} no encontrado`);
+      throw new NotFoundException(
+        `Agendamiento con ID/CI: ${term} no encontrado`,
+      );
     return agendamiento;
   }
 
   async update(id: string, updateAgendamientoDto: UpdateAgendamientoDto) {
     const agendamiento = await this.agendamientoRepository.preload({
-      id_agendamiento: id,
+      id_agenda: id,
       ...updateAgendamientoDto,
     });
     if (!agendamiento)

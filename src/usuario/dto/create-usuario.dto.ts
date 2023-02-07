@@ -1,12 +1,18 @@
+import { Polivalente } from '../../polivalente/entities/polivalente.entity';
 import {
   IsBoolean,
   IsDateString,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
 export class CreateUsuarioDto {
+  @IsString()
+  @IsUUID()
+  polivalente: Polivalente;
+
   @IsString()
   @MaxLength(10)
   us_cedula: string;
@@ -24,17 +30,11 @@ export class CreateUsuarioDto {
   us_carrera: string;
 
   @IsString()
-  us_strabajo: string;
-
-  @IsString()
   @MaxLength(10)
   us_telefono: string;
 
   @IsDateString()
   us_fecha_nac: Date;
-
-  @IsString()
-  us_role: string;
 
   @IsString()
   us_user: string;
@@ -47,4 +47,7 @@ export class CreateUsuarioDto {
   //     'The password must have a Uppercase, lowercase letter and a number.',
   // })
   us_password: string;
+
+  @IsString()
+  us_role: string;
 }

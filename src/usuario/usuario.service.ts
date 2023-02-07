@@ -109,13 +109,13 @@ export class UsuarioService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Credentials are not valid. Usuario');
+      throw new UnauthorizedException('Credentials are not valid.');
     }
     if (!bcrypt.compareSync(us_password, user.us_password)) {
-      console.log(us_password, user);
-      throw new UnauthorizedException('Credentials are not valid. Password');
+      throw new UnauthorizedException('Credentials are not valid.');
     }
     return {
+      ok: true,
       ...user,
       token: this.getJwtToken({ id_usuario: user.id_usuario }),
     };
@@ -123,6 +123,7 @@ export class UsuarioService {
 
   async checkStatus(user: Usuario) {
     return {
+      ok: true,
       ...user,
       token: this.getJwtToken({ id_usuario: user.id_usuario }),
     };

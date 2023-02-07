@@ -8,18 +8,12 @@ import {
 } from 'typeorm';
 import { Consulta } from 'src/consulta/entities/consulta.entity';
 import { Paciente } from 'src/paciente/entities/paciente.entity';
-import { Polivalente } from 'src/polivalente/entities/polivalente.entity';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 
 @Entity()
 export class Agendamiento {
   @PrimaryGeneratedColumn('uuid')
-  id_agendamiento: string;
-
-  @OneToOne(() => Consulta, (consulta) => consulta.agendamiento, {
-    onDelete: 'CASCADE',
-  })
-  consulta: Consulta;
+  id_agenda: string;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.agendamiento, {
     onDelete: 'CASCADE',
@@ -31,10 +25,10 @@ export class Agendamiento {
   })
   paciente: Paciente;
 
-  @ManyToOne(() => Polivalente, (polivalente) => polivalente.agendamiento, {
+  @OneToOne(() => Consulta, (consulta) => consulta.agendamiento, {
     onDelete: 'CASCADE',
   })
-  polivalente: Polivalente;
+  consulta: Consulta;
 
   @Column({
     type: 'integer',
@@ -42,20 +36,31 @@ export class Agendamiento {
     generatedIdentity: 'BY DEFAULT',
   })
   @Generated('increment')
-  nro_agendamiento: number;
+  nro_agenda: number;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  tipo_agendamiento: string;
+  tipo_agenda: string;
 
   @Column({
-    type: 'timestamp without time zone',
+    type: 'text',
     nullable: false,
-    default: () => 'NOW()',
   })
-  fecha_agendamiento: Date;
+  area_agenda: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  seccion_agenda: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  pol_agenda: string;
 
   @Column({
     type: 'date',
@@ -68,4 +73,17 @@ export class Agendamiento {
     nullable: false,
   })
   hora_consulta: Date;
+
+  @Column({
+    type: 'timestamp without time zone',
+    nullable: false,
+    default: () => 'NOW()',
+  })
+  fecha_agenda: Date;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  observaciones: string;
 }

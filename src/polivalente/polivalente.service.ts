@@ -6,7 +6,7 @@ import { Polivalente } from './entities/polivalente.entity';
 import { Repository } from 'typeorm';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
 import { PaginationDto } from '../common/dtos/pagination.dto';
-import { validate as isUUID } from 'uuid';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class PolivalenteService {
@@ -15,7 +15,6 @@ export class PolivalenteService {
     private readonly polivalenteRepository: Repository<Polivalente>,
     private readonly errorHandleDBException: ErrorHandleDBService,
   ) {}
-
   async create(createPolivalenteDto: CreatePolivalenteDto) {
     try {
       const polivalente =
@@ -30,17 +29,16 @@ export class PolivalenteService {
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
 
-    const polivalentes = await this.polivalenteRepository.find({
+    const polivalente = await this.polivalenteRepository.find({
       take: limit,
       skip: offset,
       relations: {
-        agendamiento: true,
+        usuario: true,
       },
     });
 
-    return polivalentes.map((polivalente) => ({
+    return polivalente.map((polivalente) => ({
       ...polivalente,
-      agendamiento: polivalente.agendamiento,
     }));
   }
 
@@ -53,22 +51,22 @@ export class PolivalenteService {
           id_polivalente: term,
         },
         relations: {
-          agendamiento: true,
+          usuario: true,
         },
       });
     } else {
       const queryBuilder =
         this.polivalenteRepository.createQueryBuilder('polivalente');
       polivalente = await queryBuilder
-        .leftJoinAndSelect('polivalente.agendamiento', 'agendamiento')
-        .where('nro_polivalente=:nro_polivalente', {
-          nro_polivalente: term,
+        .leftJoinAndSelect('polivalente.usuario', 'usuario')
+        .where('pol_descripcion=:pol_descripcion', {
+          pol_descripcion: term,
         })
         .getOne();
     }
 
     if (!polivalente)
-      throw new NotFoundException(`polivalente ${term} no encontrado`);
+      throw new NotFoundException(`Polivalente con ID: ${term} no encontrado`);
     return polivalente;
   }
 
@@ -78,8 +76,7 @@ export class PolivalenteService {
       ...updatePolivalenteDto,
     });
     if (!polivalente)
-      throw new NotFoundException(`Polivalente con ID ${id} no encontrado`);
-
+      throw new NotFoundException(`Polivalente con id: ${id} no encontrado`);
     try {
       await this.polivalenteRepository.save(polivalente);
       return polivalente;

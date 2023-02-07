@@ -1,7 +1,8 @@
-import { IsDateString, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreatePacienteDto {
   @IsString()
+  @MinLength(8)
   @MaxLength(10)
   pac_cedula: string;
 

@@ -29,7 +29,7 @@ export class UsuarioController {
   }
 
   @Post('register')
-  @Auth(UserRoles.Administrador)
+  // @Auth(UserRoles.Administrador)
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }

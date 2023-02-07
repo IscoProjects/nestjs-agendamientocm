@@ -1,23 +1,28 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
+import { Seccion } from 'src/seccion/entities/seccion.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Usuario } from '../../usuario/entities/usuario.entity';
 
 @Entity()
 export class Polivalente {
   @PrimaryGeneratedColumn('uuid')
   id_polivalente: string;
 
-  @Column({
-    type: 'text',
-    unique: true,
-    nullable: false,
+  @ManyToOne(() => Seccion, (seccion) => seccion.polivalente, {
+    onDelete: 'CASCADE',
   })
-  nro_polivalente: string;
+  seccion: Seccion;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  area_polivalente: string;
+  pol_descripcion: string;
 
   @Column({
     type: 'boolean',
@@ -26,9 +31,9 @@ export class Polivalente {
   })
   isAvailible: boolean;
 
-  @OneToMany(() => Agendamiento, (agendamiento) => agendamiento.polivalente, {
+  @OneToMany(() => Usuario, (usuario) => usuario.polivalente, {
     nullable: false,
     cascade: true,
   })
-  agendamiento: Agendamiento;
+  usuario: Usuario;
 }
