@@ -19,7 +19,7 @@ export class CreatePacienteDto {
   pac_fecha_nac: Date;
 
   @IsString()
-  @MaxLength(10)
+  @MaxLength(12)
   pac_telefono: string;
 
   @IsString()
@@ -27,4 +27,17 @@ export class CreatePacienteDto {
 
   @IsString()
   pac_afiliacion: string;
+
+  @IsString()
+  pac_referencia: string;
+
+  @IsString()
+  pac_parentesco_ref: string;
+
+  @IsString()
+  @MaxLength(12)
+  pac_tel_ref: string;
+
+  @IsString()
+  pac_dir_ref: string;
 }

@@ -1,3 +1,4 @@
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Paciente } from '../../paciente/entities/paciente.entity';
 
@@ -5,6 +6,11 @@ import { Paciente } from '../../paciente/entities/paciente.entity';
 export class UnmetDemand {
   @PrimaryGeneratedColumn('uuid')
   id_asercion: string;
+
+  @ManyToOne(() => Usuario, (usuario) => usuario.unmet_demand, {
+    onDelete: 'CASCADE',
+  })
+  usuario: Usuario;
 
   @ManyToOne(() => Paciente, (paciente) => paciente.unmet_demand, {
     onDelete: 'CASCADE',
@@ -15,7 +21,7 @@ export class UnmetDemand {
     type: 'text',
     nullable: false,
   })
-  tipo_asercion: string;
+  tipo_agenda: string;
 
   @Column({
     type: 'text',
@@ -52,11 +58,17 @@ export class UnmetDemand {
     nullable: false,
     default: () => 'NOW()',
   })
-  fecha_asercion: Date;
+  fecha_agenda: Date;
 
   @Column({
     type: 'text',
     nullable: false,
   })
   observaciones: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  appointment_status;
 }

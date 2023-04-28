@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Auth } from 'src/usuario/decorators/auth.decorator';
+import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import { AreaTrabajoService } from './area_trabajo.service';
 import { CreateAreaTrabajoDto } from './dto/create-area_trabajo.dto';
 import { UpdateAreaTrabajoDto } from './dto/update-area_trabajo.dto';
@@ -19,21 +21,25 @@ export class AreaTrabajoController {
   constructor(private readonly areaTrabajoService: AreaTrabajoService) {}
 
   @Post('register')
+  @Auth()
   create(@Body() createAreaTrabajoDto: CreateAreaTrabajoDto) {
     return this.areaTrabajoService.create(createAreaTrabajoDto);
   }
 
   @Get('list')
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.areaTrabajoService.findAll(paginationDto);
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAll() {
+    return this.areaTrabajoService.findAll();
   }
 
   @Get('search/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.areaTrabajoService.findOne(term);
   }
 
   @Patch('update/:id')
+  @Auth(UserRoles.Administrador)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAreaTrabajoDto: UpdateAreaTrabajoDto,
@@ -42,6 +48,7 @@ export class AreaTrabajoController {
   }
 
   @Delete('delete/:id')
+  @Auth(UserRoles.Administrador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.areaTrabajoService.remove(id);
   }

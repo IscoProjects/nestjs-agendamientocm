@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Repository } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
-// import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class AgendamientoService {
@@ -29,13 +28,12 @@ export class AgendamientoService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const { limit = 25, offset = 0 } = paginationDto;
 
     const agendamiento = await this.agendamientoRepository.find({
       take: limit,
       skip: offset,
       relations: {
-        usuario: true,
         paciente: true,
       },
     });
@@ -45,34 +43,24 @@ export class AgendamientoService {
     }));
   }
 
-  async findOne(term: string) {
-    // let agendamiento: Agendamiento;
-    // if (isUUID(term)) {
-    //   agendamiento = await this.agendamientoRepository.findOne({
-    //     where: {
-    //       id_agendamiento: term,
-    //     },
-    //     relations: {
-    //       usuario: true,
-    //       paciente: true,
-    //       polivalente: true,
-    //     },
-    //   });
-    // } else {
-    // const queryBuilder =
-    //   this.agendamientoRepository.createQueryBuilder('agendamiento');
-    // agendamiento = await queryBuilder
-    //   .leftJoinAndSelect('agendamiento.paciente', 'paciente')
-    //   .leftJoinAndSelect('agendamiento.polivalente', 'polivalente')
-    //   .leftJoinAndSelect('agendamiento.usuario', 'usuario')
-    //   .where('pac_cedula=:pac_cedula', {
-    //     pac_cedula: term,
-    //   })
-    //   .getOne();
+  async findOneByID(term: string) {
+    const agendamiento = await this.agendamientoRepository.findOne({
+      where: {
+        id_agenda: term,
+      },
+      relations: {
+        paciente: true,
+      },
+    });
 
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento con ID: ${term} no encontrado`);
+    return agendamiento;
+  }
+
+  async findOneByCI(term: string) {
     const agendamiento = await this.agendamientoRepository.find({
       relations: {
-        usuario: true,
         paciente: true,
       },
       where: {
@@ -83,9 +71,61 @@ export class AgendamientoService {
     });
 
     if (!agendamiento)
-      throw new NotFoundException(
-        `Agendamiento con ID/CI: ${term} no encontrado`,
-      );
+      throw new NotFoundException(`Agendamiento con CI: ${term} no encontrado`);
+    return agendamiento;
+  }
+
+  async findAllByArea(term: string) {
+    const agendamiento = await this.agendamientoRepository.find({
+      where: {
+        area_agenda: term,
+      },
+      relations: {
+        paciente: true,
+      },
+      order: {
+        hora_consulta: 'ASC',
+      },
+    });
+
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
+    return agendamiento;
+  }
+
+  async findAllBySeccion(term: string) {
+    const agendamiento = await this.agendamientoRepository.find({
+      where: {
+        seccion_agenda: term,
+      },
+      relations: {
+        paciente: true,
+      },
+      order: {
+        hora_consulta: 'ASC',
+      },
+    });
+
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
+    return agendamiento;
+  }
+
+  async findAllByPol(term: string) {
+    const agendamiento = await this.agendamientoRepository.find({
+      where: {
+        pol_agenda: term,
+      },
+      relations: {
+        paciente: true,
+      },
+      order: {
+        hora_consulta: 'ASC',
+      },
+    });
+
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
     return agendamiento;
   }
 
@@ -105,7 +145,7 @@ export class AgendamientoService {
   }
 
   async remove(id: string) {
-    const deleteAgendamiento = await this.findOne(id);
+    const deleteAgendamiento = await this.findOneByID(id);
     await this.agendamientoRepository.remove(deleteAgendamiento);
   }
 }

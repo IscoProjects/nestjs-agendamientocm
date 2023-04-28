@@ -32,10 +32,34 @@ export class AgendamientoController {
     return this.agendamientoService.findAll(paginationDto);
   }
 
+  @Get('searchByID/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findOneCi(@Param('term', ParseUUIDPipe) term: string) {
+    return this.agendamientoService.findOneByID(term);
+  }
+
   @Get('searchByCI/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOne(@Param('term') term: string) {
-    return this.agendamientoService.findOne(term);
+  findOneID(@Param('term') term: string) {
+    return this.agendamientoService.findOneByCI(term);
+  }
+
+  @Get('searchByArea/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findByArea(@Param('term') term: string) {
+    return this.agendamientoService.findAllByArea(term);
+  }
+
+  @Get('searchBySeccion/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findBySeccion(@Param('term') term: string) {
+    return this.agendamientoService.findAllBySeccion(term);
+  }
+
+  @Get('searchByPol/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findByPol(@Param('term') term: string) {
+    return this.agendamientoService.findAllByPol(term);
   }
 
   @Patch('update/:id')

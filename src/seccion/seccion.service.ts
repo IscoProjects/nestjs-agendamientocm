@@ -26,14 +26,13 @@ export class SeccionService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
-
+  async findAll() {
     const seccion = await this.seccionRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         polivalente: true,
+        // polivalente: {
+        //   usuario: true,
+        // },
       },
     });
 
@@ -58,6 +57,7 @@ export class SeccionService {
       const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
       seccion = await queryBuilder
         .leftJoinAndSelect('seccion.polivalente', 'polivalente')
+        // .leftJoinAndSelect('polivalente.usuario', 'usuario')
         .where('seccion_descripcion=:seccion_descripcion', {
           seccion_descripcion: term,
         })

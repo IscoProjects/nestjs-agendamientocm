@@ -26,12 +26,8 @@ export class AreaTrabajoService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
-
+  async findAll() {
     const area = await this.areaRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         seccion: true,
       },

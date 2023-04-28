@@ -25,7 +25,7 @@ export class ConsultaService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const { limit = 25, offset = 0 } = paginationDto;
 
     const consulta = await this.consultaRepository.find({
       take: limit,

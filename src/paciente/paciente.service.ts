@@ -27,7 +27,7 @@ export class PacienteService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const { limit = 25, offset = 0 } = paginationDto;
 
     const paciente = await this.pacienteRepository.find({
       take: limit,

@@ -31,4 +31,7 @@ export class CreateAgendamientoDto {
 
   @IsString()
   observaciones: string;
+
+  @IsString()
+  appointment_status: string;
 }

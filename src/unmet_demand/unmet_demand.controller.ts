@@ -41,7 +41,7 @@ export class UnmetDemandController {
     return this.unmetDemandService.update(id, updateUnmetDemandDto);
   }
 
-  @Delete('delete:id')
+  @Delete('delete/:id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.unmetDemandService.remove(id);
   }

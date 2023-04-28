@@ -3,13 +3,13 @@ import { SeccionService } from './seccion.service';
 import { SeccionController } from './seccion.controller';
 import { ErrorHandleDBService } from '../common/services/errorHandleDBException';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PolivalenteModule } from '../polivalente/polivalente.module';
 import { Seccion } from './entities/seccion.entity';
+import { UsuarioModule } from 'src/usuario/usuario.module';
 
 @Module({
   controllers: [SeccionController],
   providers: [SeccionService, ErrorHandleDBService],
-  imports: [TypeOrmModule.forFeature([Seccion]), PolivalenteModule],
+  imports: [TypeOrmModule.forFeature([Seccion]), UsuarioModule],
   exports: [TypeOrmModule],
 })
 export class SeccionModule {}

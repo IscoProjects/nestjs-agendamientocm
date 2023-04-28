@@ -40,7 +40,7 @@ export class UsuarioService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const { limit = 25, offset = 0 } = paginationDto;
 
     return this.usuarioRepository.find({
       take: limit,
@@ -57,13 +57,13 @@ export class UsuarioService {
           id_usuario: term,
         },
         relations: {
-          agendamiento: true,
+          polivalente: true,
         },
       });
     } else {
       const queryBuilder = this.usuarioRepository.createQueryBuilder('user');
       user = await queryBuilder
-        .leftJoinAndSelect('user.agendamiento', 'agendamiento')
+        .leftJoinAndSelect('user.polivalente', 'polivalente')
         .where('us_cedula=:us_cedula', {
           us_cedula: term,
         })
@@ -105,6 +105,12 @@ export class UsuarioService {
         us_password: true,
         us_role: true,
         id_usuario: true,
+        polivalente: {
+          pol_descripcion: true,
+        },
+      },
+      relations: {
+        polivalente: true,
       },
     });
 

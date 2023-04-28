@@ -35,7 +35,7 @@ export class UsuarioController {
   }
 
   @Get('list')
-  @Auth(UserRoles.Administrador, UserRoles.Agendador)
+  @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usuarioService.findAll(paginationDto);
   }
@@ -47,7 +47,7 @@ export class UsuarioController {
   }
 
   @Get('search/:term')
-  @Auth(UserRoles.Administrador, UserRoles.Agendador)
+  @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.usuarioService.findOne(term);
   }

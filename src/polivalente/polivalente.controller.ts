@@ -13,27 +13,39 @@ import { CreatePolivalenteDto } from './dto/create-polivalente.dto';
 import { UpdatePolivalenteDto } from './dto/update-polivalente.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
+import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
+import { Auth } from 'src/usuario/decorators/auth.decorator';
 
 @Controller('polivalente')
 export class PolivalenteController {
   constructor(private readonly polivalenteService: PolivalenteService) {}
 
   @Post('register')
+  @Auth(UserRoles.Administrador)
   create(@Body() createPolivalenteDto: CreatePolivalenteDto) {
     return this.polivalenteService.create(createPolivalenteDto);
   }
 
   @Get('list')
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.polivalenteService.findAll(paginationDto);
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAll() {
+    return this.polivalenteService.findAll();
   }
 
   @Get('search/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.polivalenteService.findOne(term);
   }
 
+  @Get('searchBySection/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAllBySection(@Param('term') term: string) {
+    return this.polivalenteService.findAllBySection(term);
+  }
+
   @Patch('update/:id')
+  @Auth(UserRoles.Administrador)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePolivalenteDto: UpdatePolivalenteDto,
@@ -42,6 +54,7 @@ export class PolivalenteController {
   }
 
   @Delete('delete/:id')
+  @Auth(UserRoles.Administrador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.polivalenteService.remove(id);
   }

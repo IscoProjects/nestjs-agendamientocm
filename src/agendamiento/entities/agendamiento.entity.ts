@@ -86,4 +86,10 @@ export class Agendamiento {
     nullable: true,
   })
   observaciones: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  appointment_status;
 }

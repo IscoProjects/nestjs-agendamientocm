@@ -47,7 +47,7 @@ export class Paciente {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   pac_telefono: string;
 
@@ -62,6 +62,30 @@ export class Paciente {
     nullable: false,
   })
   pac_afiliacion: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  pac_referencia: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  pac_parentesco_ref: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  pac_tel_ref: string;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  pac_dir_ref: string;
 
   @OneToMany(() => Agendamiento, (agendamiento) => agendamiento.paciente, {
     nullable: false,

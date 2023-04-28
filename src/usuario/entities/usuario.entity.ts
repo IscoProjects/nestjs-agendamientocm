@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UnmetDemand } from 'src/unmet_demand/entities/unmet_demand.entity';
 
 @Entity()
 export class Usuario {
@@ -89,6 +90,12 @@ export class Usuario {
     cascade: true,
   })
   agendamiento: Agendamiento;
+
+  @OneToMany(() => UnmetDemand, (unmet_demand) => unmet_demand.usuario, {
+    nullable: false,
+    cascade: true,
+  })
+  unmet_demand: UnmetDemand;
 
   @BeforeInsert()
   checkCIInsert() {

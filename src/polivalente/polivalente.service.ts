@@ -26,14 +26,11 @@ export class PolivalenteService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
-
+  async findAll() {
     const polivalente = await this.polivalenteRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         usuario: true,
+        seccion: true,
       },
     });
 
@@ -52,6 +49,7 @@ export class PolivalenteService {
         },
         relations: {
           usuario: true,
+          seccion: true,
         },
       });
     } else {
@@ -59,6 +57,7 @@ export class PolivalenteService {
         this.polivalenteRepository.createQueryBuilder('polivalente');
       polivalente = await queryBuilder
         .leftJoinAndSelect('polivalente.usuario', 'usuario')
+        .leftJoinAndSelect('polivalente.seccion', 'seccion')
         .where('pol_descripcion=:pol_descripcion', {
           pol_descripcion: term,
         })
@@ -66,7 +65,38 @@ export class PolivalenteService {
     }
 
     if (!polivalente)
-      throw new NotFoundException(`Polivalente con ID: ${term} no encontrado`);
+      throw new NotFoundException(`Polivalente '${term}' no encontrado`);
+    return polivalente;
+  }
+
+  async findAllBySection(term: string) {
+    let polivalente;
+    const queryBuilder =
+      this.polivalenteRepository.createQueryBuilder('polivalente');
+    if (isUUID(term)) {
+      polivalente = await queryBuilder
+        .leftJoinAndSelect('polivalente.usuario', 'usuario')
+        .leftJoinAndSelect('polivalente.seccion', 'seccion')
+        .where({
+          seccion: term,
+        })
+        .orderBy({ pol_descripcion: 'ASC' })
+        .getMany();
+    } else {
+      polivalente = await queryBuilder
+        .innerJoinAndSelect('polivalente.seccion', 'seccion')
+        .leftJoinAndSelect('polivalente.usuario', 'usuario')
+        .where('seccion.seccion_descripcion = :descripcion', {
+          descripcion: term,
+        })
+        .orderBy({ pol_descripcion: 'ASC' })
+        .getMany();
+    }
+
+    if (!polivalente)
+      throw new NotFoundException(
+        `Polivalentes para la sección '${term}' no encontrados`,
+      );
     return polivalente;
   }
 
