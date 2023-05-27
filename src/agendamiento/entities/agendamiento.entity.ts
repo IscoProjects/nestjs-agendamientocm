@@ -66,7 +66,7 @@ export class Agendamiento {
     type: 'date',
     nullable: false,
   })
-  fecha_consulta: Date;
+  fecha_consulta: string;
 
   @Column({
     type: 'time without time zone',
@@ -92,4 +92,11 @@ export class Agendamiento {
     nullable: false,
   })
   appointment_status;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  patient_assistance: boolean;
 }

@@ -45,9 +45,8 @@ export class Consulta {
   hora_fin: Date;
 
   @Column({
-    type: 'boolean',
+    type: 'time without time zone',
     nullable: false,
-    default: false,
   })
-  isPresent: boolean;
+  tiempo_consulta: Date;
 }

@@ -33,7 +33,9 @@ export class PacienteService {
       take: limit,
       skip: offset,
       relations: {
-        agendamiento: true,
+        agendamiento: {
+          consulta: true,
+        },
       },
     });
 
@@ -52,7 +54,9 @@ export class PacienteService {
           id_paciente: term,
         },
         relations: {
-          agendamiento: true,
+          agendamiento: {
+            consulta: true,
+          },
         },
       });
     } else {
@@ -60,6 +64,7 @@ export class PacienteService {
         this.pacienteRepository.createQueryBuilder('paciente');
       paciente = await queryBuilder
         .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
+        .leftJoinAndSelect('agendamiento.consulta', 'consulta')
         .where('pac_cedula=:pac_cedula', {
           pac_cedula: term,
         })

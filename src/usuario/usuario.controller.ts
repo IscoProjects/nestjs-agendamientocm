@@ -52,13 +52,28 @@ export class UsuarioController {
     return this.usuarioService.findOne(term);
   }
 
+  @Get('user-verify/:term')
+  @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
+  findUser(@Param('term') term: string) {
+    return this.usuarioService.findUser(term);
+  }
+
   @Patch('update/:id')
-  @Auth(UserRoles.Administrador)
+  @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
   ) {
     return this.usuarioService.update(id, updateUsuarioDto);
+  }
+
+  @Patch('update-password/:id')
+  @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
+  updatePasswor(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
+  ) {
+    return this.usuarioService.updatePassword(id, updateUsuarioDto);
   }
 
   @Delete('delete/:id')

@@ -69,16 +69,41 @@ export class UsuarioService {
         })
         .getOne();
     }
-
     if (!user)
       throw new NotFoundException(`Usuario con ID: ${term} no encontrado`);
     return user;
+  }
+
+  async findUser(term: string) {
+    const user = await this.usuarioRepository.findOne({
+      where: {
+        us_user: term,
+      },
+    });
+    if (user) throw new NotFoundException(`Usuario ${term} ya existe.`);
+    return true;
   }
 
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
     const user = await this.usuarioRepository.preload({
       id_usuario: id,
       ...updateUsuarioDto,
+    });
+    if (!user)
+      throw new NotFoundException(`Usuario con ID: ${id} no encontrado`);
+    try {
+      await this.usuarioRepository.save(user);
+      return user;
+    } catch (error) {
+      this.errorHandleDBException.errorHandleDBException(error);
+    }
+  }
+
+  async updatePassword(id: string, updateUsuarioDto: UpdateUsuarioDto) {
+    const { us_password } = updateUsuarioDto;
+    const user = await this.usuarioRepository.preload({
+      id_usuario: id,
+      us_password: bcrypt.hashSync(us_password, 10),
     });
     if (!user)
       throw new NotFoundException(`Usuario con ID: ${id} no encontrado`);

@@ -71,4 +71,11 @@ export class UnmetDemand {
     nullable: false,
   })
   appointment_status;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  patient_assistance: boolean;
 }

@@ -109,4 +109,17 @@ export class Usuario {
   checkCIUpadate() {
     this.us_cedula = this.us_cedula.replaceAll(' ', '');
   }
+
+  @BeforeInsert()
+  checkUserInsert() {
+    // if (!this.us_cedula) {
+    //   this.us_cedula = this.us_nombre;
+    // }
+    this.us_user = this.us_user.replaceAll(' ', '');
+  }
+
+  @BeforeUpdate()
+  checkUserUpadate() {
+    this.us_user = this.us_user.replaceAll(' ', '');
+  }
 }

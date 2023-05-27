@@ -5,7 +5,6 @@ import { UpdateSeccionDto } from './dto/update-seccion.dto';
 import { Seccion } from './entities/seccion.entity';
 import { Repository } from 'typeorm';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { IsDateString, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsDateString, IsString, IsUUID } from 'class-validator';
 import { Paciente } from 'src/paciente/entities/paciente.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 
@@ -34,4 +34,7 @@ export class CreateUnmetDemandDto {
 
   @IsString()
   appointment_status: string;
+
+  @IsBoolean()
+  patient_assistance: boolean;
 }

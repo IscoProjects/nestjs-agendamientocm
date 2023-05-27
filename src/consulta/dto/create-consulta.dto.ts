@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsString, IsUUID } from 'class-validator';
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
 
 export class CreateConsultaDto {
@@ -19,6 +19,6 @@ export class CreateConsultaDto {
   @IsString()
   hora_fin: Date;
 
-  @IsBoolean()
-  isPresent: boolean;
+  @IsString()
+  tiempo_consulta: Date;
 }

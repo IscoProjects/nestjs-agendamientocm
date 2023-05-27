@@ -35,6 +35,7 @@ export class AgendamientoService {
       skip: offset,
       relations: {
         paciente: true,
+        consulta: true,
       },
     });
 
@@ -50,6 +51,7 @@ export class AgendamientoService {
       },
       relations: {
         paciente: true,
+        consulta: true,
       },
     });
 
@@ -62,6 +64,7 @@ export class AgendamientoService {
     const agendamiento = await this.agendamientoRepository.find({
       relations: {
         paciente: true,
+        consulta: true,
       },
       where: {
         paciente: {
@@ -82,6 +85,7 @@ export class AgendamientoService {
       },
       relations: {
         paciente: true,
+        consulta: true,
       },
       order: {
         hora_consulta: 'ASC',
@@ -100,11 +104,34 @@ export class AgendamientoService {
       },
       relations: {
         paciente: true,
+        consulta: true,
       },
       order: {
         hora_consulta: 'ASC',
       },
     });
+
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
+    return agendamiento;
+  }
+
+  async findByPolAndDate(term: string, date: string) {
+    console.log(term, date);
+    const agendamiento = await this.agendamientoRepository.find({
+      where: {
+        pol_agenda: term,
+        fecha_consulta: date,
+      },
+      relations: {
+        paciente: true,
+      },
+      order: {
+        hora_consulta: 'ASC',
+      },
+    });
+
+    console.log(agendamiento);
 
     if (!agendamiento)
       throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
@@ -118,6 +145,7 @@ export class AgendamientoService {
       },
       relations: {
         paciente: true,
+        consulta: true,
       },
       order: {
         hora_consulta: 'ASC',

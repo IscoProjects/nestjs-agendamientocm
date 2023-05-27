@@ -56,14 +56,20 @@ export class AgendamientoController {
     return this.agendamientoService.findAllBySeccion(term);
   }
 
-  @Get('searchByPol/:term')
+  @Get('searchByPolAndDate/:term/:date')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findByPol(@Param('term') term: string) {
+  findByPolAndDate(@Param('term') term: string, @Param('date') date: string) {
+    return this.agendamientoService.findByPolAndDate(term, date);
+  }
+
+  @Get('searchAllByPol/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAllByPol(@Param('term') term: string) {
     return this.agendamientoService.findAllByPol(term);
   }
 
   @Patch('update/:id')
-  @Auth(UserRoles.Agendador)
+  @Auth(UserRoles.Agendador, UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAgendamientoDto: UpdateAgendamientoDto,
