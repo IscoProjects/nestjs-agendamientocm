@@ -35,7 +35,7 @@ export class CreatePacienteDto {
   pac_parentesco_ref: string;
 
   @IsString()
-  @MaxLength(12)
+  @MaxLength(15)
   pac_tel_ref: string;
 
   @IsString()

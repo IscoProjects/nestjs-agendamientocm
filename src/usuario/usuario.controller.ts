@@ -6,13 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { AuthDto } from './dto/auth.dto';
 import { Auth } from './decorators/auth.decorator';
 import { UserRoles } from './interfaces/user-roles.interface';
@@ -29,15 +27,21 @@ export class UsuarioController {
   }
 
   @Post('register')
-  // @Auth(UserRoles.Administrador)
+  @Auth(UserRoles.Administrador)
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
 
+  @Get('list-metadata')
+  @Auth(UserRoles.Administrador)
+  findAllAssignmentsInformationFromUsers() {
+    return this.usuarioService.findAllAssignmentsInformationFromUsers();
+  }
+
   @Get('list')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.usuarioService.findAll(paginationDto);
+  findAll() {
+    return this.usuarioService.findAll();
   }
 
   @Get('status-verify')

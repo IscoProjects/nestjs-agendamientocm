@@ -4,7 +4,7 @@ import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
-import { Repository } from 'typeorm';
+import { Between, Repository, Not } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
 
 @Injectable()
@@ -42,6 +42,22 @@ export class AgendamientoService {
     return agendamiento.map((agendamiento) => ({
       ...agendamiento,
     }));
+  }
+
+  async findByDateRange(seccion: string, startDate: string, endDate: string) {
+    const agendamientos = await this.agendamientoRepository.find({
+      where: {
+        seccion_agenda: seccion,
+        fecha_consulta: Between(startDate, endDate),
+      },
+    });
+
+    if (!agendamientos)
+      throw new NotFoundException(
+        `No existen agendamientos entre las dos fechas.`,
+      );
+
+    return agendamientos;
   }
 
   async findOneByID(term: string) {
@@ -117,7 +133,6 @@ export class AgendamientoService {
   }
 
   async findByPolAndDate(term: string, date: string) {
-    console.log(term, date);
     const agendamiento = await this.agendamientoRepository.find({
       where: {
         pol_agenda: term,
@@ -131,8 +146,6 @@ export class AgendamientoService {
       },
     });
 
-    console.log(agendamiento);
-
     if (!agendamiento)
       throw new NotFoundException(`Agendamiento(s) para ${term} no encontrado`);
     return agendamiento;
@@ -142,6 +155,7 @@ export class AgendamientoService {
     const agendamiento = await this.agendamientoRepository.find({
       where: {
         pol_agenda: term,
+        appointment_status: Not('Cancelado'),
       },
       relations: {
         paciente: true,

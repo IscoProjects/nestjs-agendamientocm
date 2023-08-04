@@ -29,15 +29,27 @@ export class SeccionService {
     const seccion = await this.seccionRepository.find({
       relations: {
         polivalente: true,
-        // polivalente: {
-        //   usuario: true,
-        // },
+        area_trabajo: true,
       },
     });
 
-    return seccion.map((seccion) => ({
-      ...seccion,
-    }));
+    return seccion;
+  }
+
+  async findSeccionAndPol() {
+    const seccion = await this.seccionRepository.find({
+      relations: {
+        polivalente: true,
+      },
+      where: {
+        isAvailible: true,
+        polivalente: {
+          isAvailible: true,
+        },
+      },
+    });
+
+    return seccion;
   }
 
   async findOne(term: string) {
@@ -56,7 +68,6 @@ export class SeccionService {
       const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
       seccion = await queryBuilder
         .leftJoinAndSelect('seccion.polivalente', 'polivalente')
-        // .leftJoinAndSelect('polivalente.usuario', 'usuario')
         .where('seccion_descripcion=:seccion_descripcion', {
           seccion_descripcion: term,
         })
@@ -65,6 +76,38 @@ export class SeccionService {
 
     if (!seccion)
       throw new NotFoundException(`Seccion con ID: ${term} no encontrado`);
+
+    return seccion;
+  }
+
+  //Buscar secciones que pertenecen a un Area
+  async findByArea(term: string) {
+    let seccion: Seccion[];
+
+    if (isUUID(term)) {
+      seccion = await this.seccionRepository.find({
+        where: {
+          area_trabajo: {
+            id_atrabajo: term,
+          },
+        },
+        relations: {
+          area_trabajo: true,
+        },
+      });
+    } else {
+      const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
+      seccion = await queryBuilder
+        .leftJoinAndSelect('seccion.area_trabajo', 'area_trabajo')
+        .where('area_trabajo.area_descripcion = :term', { term })
+        .getMany();
+    }
+
+    if (!seccion)
+      throw new NotFoundException(
+        `Seccion(es) pertenecientes al área con ID: ${term} no encontrado`,
+      );
+
     return seccion;
   }
 

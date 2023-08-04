@@ -6,10 +6,8 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import { AreaTrabajoService } from './area_trabajo.service';
@@ -21,7 +19,7 @@ export class AreaTrabajoController {
   constructor(private readonly areaTrabajoService: AreaTrabajoService) {}
 
   @Post('register')
-  @Auth()
+  @Auth(UserRoles.Administrador)
   create(@Body() createAreaTrabajoDto: CreateAreaTrabajoDto) {
     return this.areaTrabajoService.create(createAreaTrabajoDto);
   }
@@ -30,6 +28,12 @@ export class AreaTrabajoController {
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll() {
     return this.areaTrabajoService.findAll();
+  }
+
+  @Get('list-metadata')
+  @Auth(UserRoles.Administrador)
+  findAreasMetadata() {
+    return this.areaTrabajoService.findAreasMetadata();
   }
 
   @Get('search/:term')

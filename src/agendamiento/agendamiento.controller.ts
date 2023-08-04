@@ -32,15 +32,29 @@ export class AgendamientoController {
     return this.agendamientoService.findAll(paginationDto);
   }
 
+  @Get('filterByDateRange/:seccion/:startDate/:endDate')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador)
+  numberAppointmentsByDateRange(
+    @Param('seccion') seccion: string,
+    @Param('startDate') startDate: string,
+    @Param('endDate') endDate: string,
+  ) {
+    return this.agendamientoService.findByDateRange(
+      seccion,
+      startDate,
+      endDate,
+    );
+  }
+
   @Get('searchByID/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOneCi(@Param('term', ParseUUIDPipe) term: string) {
+  findOneByID(@Param('term', ParseUUIDPipe) term: string) {
     return this.agendamientoService.findOneByID(term);
   }
 
   @Get('searchByCI/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOneID(@Param('term') term: string) {
+  findOneByCi(@Param('term') term: string) {
     return this.agendamientoService.findOneByCI(term);
   }
 

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { AreaTrabajo } from './entities/area_trabajo.entity';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 
 @Injectable()
@@ -36,6 +35,20 @@ export class AreaTrabajoService {
     return area.map((area) => ({
       ...area,
     }));
+  }
+
+  async findAreasMetadata() {
+    const area = await this.areaRepository.find({
+      relations: {
+        seccion: {
+          polivalente: {
+            usuario: true,
+          },
+        },
+      },
+    });
+
+    return area;
   }
 
   async findOne(term: string) {

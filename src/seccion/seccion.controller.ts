@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { SeccionService } from './seccion.service';
 import { CreateSeccionDto } from './dto/create-seccion.dto';
 import { UpdateSeccionDto } from './dto/update-seccion.dto';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
@@ -32,10 +30,22 @@ export class SeccionController {
     return this.seccionService.findAll();
   }
 
+  @Get('listActiveOnly')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador)
+  findSeccionAndPol() {
+    return this.seccionService.findSeccionAndPol();
+  }
+
   @Get('search/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.seccionService.findOne(term);
+  }
+
+  @Get('searchByArea/:term')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findByArea(@Param('term') term: string) {
+    return this.seccionService.findByArea(term);
   }
 
   @Patch('update/:id')

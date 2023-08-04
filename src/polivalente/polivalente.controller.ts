@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { PolivalenteService } from './polivalente.service';
 import { CreatePolivalenteDto } from './dto/create-polivalente.dto';
 import { UpdatePolivalenteDto } from './dto/update-polivalente.dto';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
@@ -42,6 +40,15 @@ export class PolivalenteController {
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAllBySection(@Param('term') term: string) {
     return this.polivalenteService.findAllBySection(term);
+  }
+
+  @Get('searchBySectionAndDate/:term/:date')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAllBySectionAndDate(
+    @Param('term') term: string,
+    @Param('date') date: string,
+  ) {
+    return this.polivalenteService.findAllBySectionAndDate(term, date);
   }
 
   @Patch('update/:id')

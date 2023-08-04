@@ -67,6 +67,12 @@ export class Usuario {
 
   @Column({
     type: 'text',
+    nullable: false,
+  })
+  us_sexo: string;
+
+  @Column({
+    type: 'text',
     unique: true,
     nullable: false,
   })

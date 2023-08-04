@@ -58,6 +58,11 @@ export class PacienteService {
             consulta: true,
           },
         },
+        order: {
+          agendamiento: {
+            fecha_consulta: 'DESC',
+          },
+        },
       });
     } else {
       const queryBuilder =
@@ -68,6 +73,7 @@ export class PacienteService {
         .where('pac_cedula=:pac_cedula', {
           pac_cedula: term,
         })
+        .orderBy('agendamiento.fecha_consulta', 'DESC')
         .getOne();
     }
 

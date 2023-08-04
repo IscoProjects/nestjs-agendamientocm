@@ -30,11 +30,14 @@ export class CreateUsuarioDto {
   us_carrera: string;
 
   @IsString()
-  @MaxLength(10)
+  @MaxLength(15)
   us_telefono: string;
 
   @IsDateString()
   us_fecha_nac: Date;
+
+  @IsString()
+  us_sexo: string;
 
   @IsString()
   us_user: string;

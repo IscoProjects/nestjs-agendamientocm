@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Usuario } from './entities/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,7 +12,7 @@ import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException
 import { validate as isUUID } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
-import { IJwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -39,13 +38,28 @@ export class UsuarioService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 25, offset = 0 } = paginationDto;
-
-    return this.usuarioRepository.find({
-      take: limit,
-      skip: offset,
+  async findAllAssignmentsInformationFromUsers() {
+    const usuario = await this.usuarioRepository.find({
+      relations: {
+        polivalente: {
+          seccion: {
+            area_trabajo: true,
+          },
+        },
+      },
     });
+
+    return usuario;
+  }
+
+  async findAll() {
+    const usuario = await this.usuarioRepository.find({
+      relations: {
+        polivalente: true,
+      },
+    });
+
+    return usuario;
   }
 
   async findOne(term: string) {
@@ -71,6 +85,7 @@ export class UsuarioService {
     }
     if (!user)
       throw new NotFoundException(`Usuario con ID: ${term} no encontrado`);
+
     return user;
   }
 
@@ -120,7 +135,7 @@ export class UsuarioService {
     await this.usuarioRepository.remove(deleteUsuario);
   }
 
-  async loginUser(authDto: AuthDto) {
+  async loginUser(authDto: AuthDto): Promise<any> {
     const { us_user, us_password } = authDto;
 
     const user = await this.usuarioRepository.findOne({
@@ -130,6 +145,7 @@ export class UsuarioService {
         us_password: true,
         us_role: true,
         id_usuario: true,
+        us_isActive: true,
         polivalente: {
           pol_descripcion: true,
         },
@@ -140,11 +156,15 @@ export class UsuarioService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Credentials are not valid.');
+      throw new UnauthorizedException('Credenciales no válidas');
+    }
+    if (!user.us_isActive) {
+      throw new UnauthorizedException('Usuario no activo');
     }
     if (!bcrypt.compareSync(us_password, user.us_password)) {
-      throw new UnauthorizedException('Credentials are not valid.');
+      throw new UnauthorizedException('Credenciales no válidas');
     }
+
     return {
       ok: true,
       ...user,
@@ -160,7 +180,7 @@ export class UsuarioService {
     };
   }
 
-  private getJwtToken(payload: IJwtPayload) {
+  private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
   }

@@ -5,7 +5,6 @@ import { UpdatePolivalenteDto } from './dto/update-polivalente.dto';
 import { Polivalente } from './entities/polivalente.entity';
 import { Repository } from 'typeorm';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 
 @Injectable()
@@ -27,16 +26,13 @@ export class PolivalenteService {
   }
 
   async findAll() {
-    const polivalente = await this.polivalenteRepository.find({
-      relations: {
-        usuario: true,
-        seccion: true,
-      },
-    });
+    const polivalentes = await this.polivalenteRepository
+      .createQueryBuilder('polivalente')
+      .leftJoinAndSelect('polivalente.usuario', 'usuario')
+      .leftJoinAndSelect('polivalente.seccion', 'seccion')
+      .getMany();
 
-    return polivalente.map((polivalente) => ({
-      ...polivalente,
-    }));
+    return polivalentes;
   }
 
   async findOne(term: string) {
@@ -73,19 +69,26 @@ export class PolivalenteService {
     let polivalente;
     const queryBuilder =
       this.polivalenteRepository.createQueryBuilder('polivalente');
+
     if (isUUID(term)) {
+      polivalente = await this.polivalenteRepository.find({
+        relations: {
+          usuario: true,
+          seccion: true,
+        },
+        where: {
+          seccion: {
+            id_seccion: term,
+          },
+        },
+        order: {
+          pol_descripcion: 'ASC',
+        },
+      });
+    } else {
       polivalente = await queryBuilder
         .leftJoinAndSelect('polivalente.usuario', 'usuario')
         .leftJoinAndSelect('polivalente.seccion', 'seccion')
-        .where({
-          seccion: term,
-        })
-        .orderBy({ pol_descripcion: 'ASC' })
-        .getMany();
-    } else {
-      polivalente = await queryBuilder
-        .innerJoinAndSelect('polivalente.seccion', 'seccion')
-        .leftJoinAndSelect('polivalente.usuario', 'usuario')
         .where('seccion.seccion_descripcion = :descripcion', {
           descripcion: term,
         })
@@ -93,6 +96,80 @@ export class PolivalenteService {
         .getMany();
     }
 
+    if (!polivalente)
+      throw new NotFoundException(
+        `Polivalentes para la sección '${term}' no encontrados`,
+      );
+    return polivalente;
+  }
+
+  async findAllBySectionAndDate(term: string, date: string) {
+    let polivalente;
+    const queryBuilder =
+      this.polivalenteRepository.createQueryBuilder('polivalente');
+    if (date) {
+      if (isUUID(term)) {
+        polivalente = await queryBuilder
+          .leftJoinAndSelect('polivalente.usuario', 'usuario')
+          .leftJoinAndSelect('polivalente.seccion', 'seccion')
+          .leftJoinAndSelect(
+            'usuario.agendamiento',
+            'agendamiento',
+            'agendamiento.fecha_consulta=:date',
+            { date },
+          )
+          .where({
+            seccion: {
+              id_seccion: term,
+            },
+          })
+          .orderBy({ pol_descripcion: 'ASC' })
+          .getMany();
+
+        if (polivalente.isEmpty) {
+          polivalente = await this.polivalenteRepository.find({
+            relations: {
+              usuario: true,
+              seccion: true,
+            },
+            where: {
+              seccion: {
+                id_seccion: term,
+              },
+            },
+          });
+        }
+      } else {
+        polivalente = await queryBuilder
+          .leftJoinAndSelect('polivalente.usuario', 'usuario')
+          .leftJoinAndSelect('polivalente.seccion', 'seccion')
+          .leftJoinAndSelect(
+            'usuario.agendamiento',
+            'agendamiento',
+            'agendamiento.fecha_consulta=:date',
+            { date },
+          )
+          .where('seccion.seccion_descripcion = :descripcion', {
+            descripcion: term,
+          })
+          .orderBy({ pol_descripcion: 'ASC' })
+          .getMany();
+
+        if (polivalente.length === 0) {
+          polivalente = await this.polivalenteRepository.find({
+            relations: {
+              usuario: true,
+              seccion: true,
+            },
+            where: {
+              seccion: {
+                seccion_descripcion: term,
+              },
+            },
+          });
+        }
+      }
+    }
     if (!polivalente)
       throw new NotFoundException(
         `Polivalentes para la sección '${term}' no encontrados`,
