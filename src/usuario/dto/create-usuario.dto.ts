@@ -1,4 +1,3 @@
-import { Polivalente } from '../../polivalente/entities/polivalente.entity';
 import {
   IsBoolean,
   IsDateString,
@@ -7,11 +6,12 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { EstacionTrabajo } from 'src/estacion-trabajo/entities/estacion-trabajo.entity';
 
 export class CreateUsuarioDto {
   @IsString()
   @IsUUID()
-  polivalente: Polivalente;
+  estacion_trabajo: EstacionTrabajo;
 
   @IsString()
   @MaxLength(10)

@@ -21,4 +21,10 @@ export class CreateConsultaDto {
 
   @IsString()
   tiempo_consulta: Date;
+
+  @IsString()
+  tiempo_espera: Date;
+
+  @IsString()
+  observaciones: string;
 }

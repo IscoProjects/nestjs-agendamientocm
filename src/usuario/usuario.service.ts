@@ -41,9 +41,9 @@ export class UsuarioService {
   async findAllAssignmentsInformationFromUsers() {
     const usuario = await this.usuarioRepository.find({
       relations: {
-        polivalente: {
+        estacion_trabajo: {
           seccion: {
-            area_trabajo: true,
+            area: true,
           },
         },
       },
@@ -55,7 +55,7 @@ export class UsuarioService {
   async findAll() {
     const usuario = await this.usuarioRepository.find({
       relations: {
-        polivalente: true,
+        estacion_trabajo: true,
       },
     });
 
@@ -63,30 +63,24 @@ export class UsuarioService {
   }
 
   async findOne(term: string) {
-    let user: Usuario;
+    const usuario = await this.usuarioRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.estacion_trabajo', 'estacion_trabajo')
+      .where((qb) => {
+        if (isUUID(term)) {
+          qb.where('user.id_usuario = :id', { id: term });
+        } else {
+          qb.where('user.us_cedula = :cedula', { cedula: term });
+        }
+      })
+      .getOne();
 
-    if (isUUID(term)) {
-      user = await this.usuarioRepository.findOne({
-        where: {
-          id_usuario: term,
-        },
-        relations: {
-          polivalente: true,
-        },
-      });
-    } else {
-      const queryBuilder = this.usuarioRepository.createQueryBuilder('user');
-      user = await queryBuilder
-        .leftJoinAndSelect('user.polivalente', 'polivalente')
-        .where('us_cedula=:us_cedula', {
-          us_cedula: term,
-        })
-        .getOne();
-    }
-    if (!user)
-      throw new NotFoundException(`Usuario con ID: ${term} no encontrado`);
+    if (!usuario)
+      throw new NotFoundException(
+        `Búsqueda para usuario: ${term}, no encontrado`,
+      );
 
-    return user;
+    return usuario;
   }
 
   async findUser(term: string) {
@@ -146,12 +140,12 @@ export class UsuarioService {
         us_role: true,
         id_usuario: true,
         us_isActive: true,
-        polivalente: {
-          pol_descripcion: true,
+        estacion_trabajo: {
+          descripcion: true,
         },
       },
       relations: {
-        polivalente: true,
+        estacion_trabajo: true,
       },
     });
 

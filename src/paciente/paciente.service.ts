@@ -39,46 +39,31 @@ export class PacienteService {
       },
     });
 
-    return paciente.map((paciente) => ({
-      ...paciente,
-      agendamiento: paciente.agendamiento,
-    }));
+    return paciente;
   }
 
   async findOne(term: string) {
-    let paciente: Paciente;
-
-    if (isUUID(term)) {
-      paciente = await this.pacienteRepository.findOne({
-        where: {
-          id_paciente: term,
-        },
-        relations: {
-          agendamiento: {
-            consulta: true,
-          },
-        },
-        order: {
-          agendamiento: {
-            fecha_consulta: 'DESC',
-          },
-        },
-      });
-    } else {
-      const queryBuilder =
-        this.pacienteRepository.createQueryBuilder('paciente');
-      paciente = await queryBuilder
-        .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
-        .leftJoinAndSelect('agendamiento.consulta', 'consulta')
-        .where('pac_cedula=:pac_cedula', {
-          pac_cedula: term,
-        })
-        .orderBy('agendamiento.fecha_consulta', 'DESC')
-        .getOne();
-    }
+    const paciente = await this.pacienteRepository
+      .createQueryBuilder('paciente')
+      .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
+      .leftJoinAndSelect('agendamiento.consulta', 'consulta')
+      .where((qb) => {
+        if (isUUID(term)) {
+          qb.where('paciente.id_paciente = :id', { id: term });
+        } else {
+          qb.where('paciente.pac_cedula = :cedula', {
+            cedula: term,
+          });
+        }
+      })
+      .orderBy('agendamiento.fecha_consulta', 'DESC')
+      .getOne();
 
     if (!paciente)
-      throw new NotFoundException(`Paciente ${term} no encontrado`);
+      throw new NotFoundException(
+        `Búsqueda de paciente: ${term}, no encontrado`,
+      );
+
     return paciente;
   }
 

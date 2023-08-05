@@ -1,4 +1,5 @@
 import { Seccion } from 'src/seccion/entities/seccion.entity';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 import {
   Column,
   Entity,
@@ -6,14 +7,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Usuario } from '../../usuario/entities/usuario.entity';
 
 @Entity()
-export class Polivalente {
+export class EstacionTrabajo {
   @PrimaryGeneratedColumn('uuid')
-  id_polivalente: string;
+  id_estacion: string;
 
-  @ManyToOne(() => Seccion, (seccion) => seccion.polivalente, {
+  @ManyToOne(() => Seccion, (seccion) => seccion.estacion_trabajo, {
     onDelete: 'CASCADE',
   })
   seccion: Seccion;
@@ -22,7 +22,7 @@ export class Polivalente {
     type: 'text',
     nullable: false,
   })
-  pol_descripcion: string;
+  descripcion: string;
 
   @Column({
     type: 'boolean',
@@ -31,7 +31,7 @@ export class Polivalente {
   })
   isAvailible: boolean;
 
-  @OneToMany(() => Usuario, (usuario) => usuario.polivalente, {
+  @OneToMany(() => Usuario, (usuario) => usuario.estacion_trabajo, {
     nullable: false,
     cascade: true,
   })

@@ -1,17 +1,17 @@
+import { Seccion } from 'src/seccion/entities/seccion.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Seccion } from '../../seccion/entities/seccion.entity';
 
 @Entity()
-export class AreaTrabajo {
+export class Area {
   @PrimaryGeneratedColumn('uuid')
-  id_atrabajo: string;
+  id_area: string;
 
   @Column({
     type: 'text',
     nullable: false,
     unique: true,
   })
-  area_descripcion: string;
+  descripcion: string;
 
   @Column({
     type: 'boolean',
@@ -20,7 +20,7 @@ export class AreaTrabajo {
   })
   isAvailible: boolean;
 
-  @OneToMany(() => Seccion, (seccion) => seccion.area_trabajo, {
+  @OneToMany(() => Seccion, (seccion) => seccion.area, {
     nullable: false,
     cascade: true,
   })

@@ -6,10 +6,9 @@ import { ConsultaModule } from './consulta/consulta.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
-import { UnmetDemandModule } from './unmet_demand/unmet_demand.module';
-import { AreaTrabajoModule } from './area_trabajo/area_trabajo.module';
 import { SeccionModule } from './seccion/seccion.module';
-import { PolivalenteModule } from './polivalente/polivalente.module';
+import { AreaModule } from './area/area.module';
+import { EstacionTrabajoModule } from './estacion-trabajo/estacion-trabajo.module';
 
 @Module({
   imports: [
@@ -29,10 +28,9 @@ import { PolivalenteModule } from './polivalente/polivalente.module';
     AgendamientoModule,
     PacienteModule,
     ConsultaModule,
-    AreaTrabajoModule,
-    UnmetDemandModule,
     SeccionModule,
-    PolivalenteModule,
+    AreaModule,
+    EstacionTrabajoModule,
   ],
   controllers: [],
   providers: [],

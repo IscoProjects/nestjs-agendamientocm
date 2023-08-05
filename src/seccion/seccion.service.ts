@@ -28,8 +28,8 @@ export class SeccionService {
   async findAll() {
     const seccion = await this.seccionRepository.find({
       relations: {
-        polivalente: true,
-        area_trabajo: true,
+        estacion_trabajo: true,
+        area: true,
       },
     });
 
@@ -39,11 +39,11 @@ export class SeccionService {
   async findSeccionAndPol() {
     const seccion = await this.seccionRepository.find({
       relations: {
-        polivalente: true,
+        estacion_trabajo: true,
       },
       where: {
         isAvailible: true,
-        polivalente: {
+        estacion_trabajo: {
           isAvailible: true,
         },
       },
@@ -61,52 +61,76 @@ export class SeccionService {
           id_seccion: term,
         },
         relations: {
-          polivalente: true,
+          estacion_trabajo: true,
         },
       });
     } else {
       const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
       seccion = await queryBuilder
-        .leftJoinAndSelect('seccion.polivalente', 'polivalente')
-        .where('seccion_descripcion=:seccion_descripcion', {
-          seccion_descripcion: term,
+        .leftJoinAndSelect('seccion.estacion_trabajo', 'estacion_trabajo')
+        .where('seccion.descripcion=:descripcion', {
+          descripcion: term,
         })
         .getOne();
     }
 
     if (!seccion)
-      throw new NotFoundException(`Seccion con ID: ${term} no encontrado`);
+      throw new NotFoundException(
+        `Búsqueda para sección: ${term}, sin resultados`,
+      );
 
     return seccion;
   }
 
   //Buscar secciones que pertenecen a un Area
   async findByArea(term: string) {
-    let seccion: Seccion[];
+    // let seccion: Seccion[];
 
-    if (isUUID(term)) {
-      seccion = await this.seccionRepository.find({
-        where: {
-          area_trabajo: {
-            id_atrabajo: term,
-          },
-        },
-        relations: {
-          area_trabajo: true,
-        },
-      });
-    } else {
-      const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
-      seccion = await queryBuilder
-        .leftJoinAndSelect('seccion.area_trabajo', 'area_trabajo')
-        .where('area_trabajo.area_descripcion = :term', { term })
-        .getMany();
-    }
+    // if (isUUID(term)) {
+    //   seccion = await this.seccionRepository.find({
+    //     where: {
+    //       area: {
+    //         id_area: term,
+    //       },
+    //     },
+    //     relations: {
+    //       area: true,
+    //     },
+    //   });
+    // } else {
+    //   const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
+    //   seccion = await queryBuilder
+    //     .leftJoinAndSelect('seccion.area', 'area')
+    //     .where('area.descripcion = :term', { term })
+    //     .getMany();
+    // }
 
-    if (!seccion)
+    // if (!seccion)
+    //   throw new NotFoundException(
+    //     `Seccion(es) pertenecientes al área con ID: ${term} no encontrado`,
+    //   );
+
+    // return seccion;
+
+    const seccion = await this.seccionRepository
+      .createQueryBuilder('seccion')
+      .leftJoinAndSelect('seccion.area', 'area')
+      .where((qb) => {
+        if (isUUID(term)) {
+          qb.where('area.id_area = :id', { id: term });
+        } else {
+          qb.where('area.descripcion = :descripcion', {
+            descripcion: term,
+          });
+        }
+      })
+      .getMany();
+
+    if (!seccion || seccion.length === 0) {
       throw new NotFoundException(
-        `Seccion(es) pertenecientes al área con ID: ${term} no encontrado`,
+        `Sección(es) pertenecientes al área: ${term} no encontradas`,
       );
+    }
 
     return seccion;
   }

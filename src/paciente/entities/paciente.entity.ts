@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
-import { UnmetDemand } from '../../unmet_demand/entities/unmet_demand.entity';
 
 @Entity()
 export class Paciente {
@@ -59,7 +58,7 @@ export class Paciente {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   pac_afiliacion: string;
 
@@ -73,31 +72,25 @@ export class Paciente {
     type: 'text',
     nullable: false,
   })
-  pac_parentesco_ref: string;
+  pac_ref_parentesco: string;
 
   @Column({
     type: 'text',
     nullable: true,
   })
-  pac_tel_ref: string;
+  pac_ref_telefono: string;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  pac_dir_ref: string;
+  pac_ref_direccion: string;
 
   @OneToMany(() => Agendamiento, (agendamiento) => agendamiento.paciente, {
     nullable: false,
     cascade: true,
   })
   agendamiento: Agendamiento;
-
-  @OneToMany(() => UnmetDemand, (unmet_demand) => unmet_demand.paciente, {
-    nullable: false,
-    cascade: true,
-  })
-  unmet_demand: UnmetDemand;
 
   @BeforeInsert()
   checkCIInsert() {

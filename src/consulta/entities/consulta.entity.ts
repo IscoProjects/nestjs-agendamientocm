@@ -49,4 +49,16 @@ export class Consulta {
     nullable: false,
   })
   tiempo_consulta: Date;
+
+  @Column({
+    type: 'time without time zone',
+    nullable: false,
+  })
+  tiempo_espera: Date;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  observaciones: string;
 }

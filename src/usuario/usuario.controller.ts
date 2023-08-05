@@ -26,19 +26,19 @@ export class UsuarioController {
     return this.usuarioService.loginUser(authDto);
   }
 
-  @Post('register')
+  @Post('registrar')
   @Auth(UserRoles.Administrador)
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
 
-  @Get('list-metadata')
+  @Get('metadata')
   @Auth(UserRoles.Administrador)
   findAllAssignmentsInformationFromUsers() {
     return this.usuarioService.findAllAssignmentsInformationFromUsers();
   }
 
-  @Get('list')
+  @Get('listar')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findAll() {
     return this.usuarioService.findAll();
@@ -50,7 +50,7 @@ export class UsuarioController {
     return this.usuarioService.checkStatus(user);
   }
 
-  @Get('search/:term')
+  @Get('buscar/:term')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.usuarioService.findOne(term);
@@ -62,7 +62,7 @@ export class UsuarioController {
     return this.usuarioService.findUser(term);
   }
 
-  @Patch('update/:id')
+  @Patch('actualizar/:id')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -80,7 +80,7 @@ export class UsuarioController {
     return this.usuarioService.updatePassword(id, updateUsuarioDto);
   }
 
-  @Delete('delete/:id')
+  @Delete('eliminar/:id')
   @Auth(UserRoles.Administrador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usuarioService.remove(id);

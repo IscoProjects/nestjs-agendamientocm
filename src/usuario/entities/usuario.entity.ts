@@ -1,5 +1,5 @@
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
-import { Polivalente } from '../../polivalente/entities/polivalente.entity';
+import { EstacionTrabajo } from 'src/estacion-trabajo/entities/estacion-trabajo.entity';
 import { ManyToOne } from 'typeorm';
 import {
   BeforeInsert,
@@ -9,17 +9,16 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UnmetDemand } from 'src/unmet_demand/entities/unmet_demand.entity';
 
 @Entity()
 export class Usuario {
   @PrimaryGeneratedColumn('uuid')
   id_usuario: string;
 
-  @ManyToOne(() => Polivalente, (polivalente) => polivalente.usuario, {
+  @ManyToOne(() => EstacionTrabajo, (estacion) => estacion.usuario, {
     onDelete: 'CASCADE',
   })
-  polivalente: Polivalente;
+  estacion_trabajo: EstacionTrabajo;
 
   @Column({
     type: 'text',
@@ -96,12 +95,6 @@ export class Usuario {
     cascade: true,
   })
   agendamiento: Agendamiento;
-
-  @OneToMany(() => UnmetDemand, (unmet_demand) => unmet_demand.usuario, {
-    nullable: false,
-    cascade: true,
-  })
-  unmet_demand: UnmetDemand;
 
   @BeforeInsert()
   checkCIInsert() {

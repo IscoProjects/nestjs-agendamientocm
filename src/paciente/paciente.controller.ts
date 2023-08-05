@@ -20,25 +20,25 @@ import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 export class PacienteController {
   constructor(private readonly pacienteService: PacienteService) {}
 
-  @Post('register')
+  @Post('registrar')
   @Auth(UserRoles.Agendador)
   create(@Body() createPacienteDto: CreatePacienteDto) {
     return this.pacienteService.create(createPacienteDto);
   }
 
-  @Get('list')
+  @Get('listar')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.pacienteService.findAll(paginationDto);
   }
 
-  @Get('search/:term')
+  @Get('buscar/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.pacienteService.findOne(term);
   }
 
-  @Patch('update/:id')
+  @Patch('actualizar/:id')
   @Auth(UserRoles.Agendador)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -47,7 +47,7 @@ export class PacienteController {
     return this.pacienteService.update(id, updatePacienteDto);
   }
 
-  @Delete('delete/:id')
+  @Delete('eliminar/:id')
   @Auth(UserRoles.Agendador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.pacienteService.remove(id);

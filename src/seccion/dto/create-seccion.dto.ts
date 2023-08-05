@@ -1,13 +1,13 @@
 import { IsBoolean, IsString, IsUUID } from 'class-validator';
-import { AreaTrabajo } from '../../area_trabajo/entities/area_trabajo.entity';
+import { Area } from 'src/area/entities/area.entity';
 
 export class CreateSeccionDto {
   @IsString()
   @IsUUID()
-  area_trabajo: AreaTrabajo;
+  area: Area;
 
   @IsString()
-  seccion_descripcion: string;
+  descripcion: string;
 
   @IsBoolean()
   isAvailible: boolean;

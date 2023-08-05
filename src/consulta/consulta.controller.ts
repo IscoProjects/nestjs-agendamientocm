@@ -20,31 +20,31 @@ import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 export class ConsultaController {
   constructor(private readonly consultaService: ConsultaService) {}
 
-  @Post('register')
+  @Post('registrar')
   @Auth(UserRoles.Medico)
   create(@Body() createConsultaDto: CreateConsultaDto) {
     return this.consultaService.create(createConsultaDto);
   }
 
-  @Get('list')
+  @Get('listar')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.consultaService.findAll(paginationDto);
   }
 
-  @Get('searchById/:term')
+  @Get('buscarPorID/:term')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findOne(@Param('term', ParseUUIDPipe) term: string) {
     return this.consultaService.findOne(term);
   }
 
-  @Get('searchByMed/:term')
+  @Get('buscarPorMedico/:term')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findOneByMed(@Param('term', ParseUUIDPipe) term: string) {
     return this.consultaService.findOneByMed(term);
   }
 
-  @Patch('update/:id')
+  @Patch('actualizar/:id')
   @Auth(UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -53,7 +53,7 @@ export class ConsultaController {
     return this.consultaService.update(id, updateConsultaDto);
   }
 
-  @Delete('delete/:id')
+  @Delete('eliminar/:id')
   @Auth(UserRoles.Medico)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.consultaService.remove(id);

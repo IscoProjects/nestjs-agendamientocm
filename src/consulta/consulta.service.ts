@@ -35,10 +35,7 @@ export class ConsultaService {
       },
     });
 
-    return consulta.map((consulta) => ({
-      ...consulta,
-      agendamiento: consulta.agendamiento,
-    }));
+    return consulta;
   }
 
   async findOne(term: string) {
@@ -52,7 +49,8 @@ export class ConsultaService {
     });
 
     if (!consulta)
-      throw new NotFoundException(`Consulta ${term} no encontrado`);
+      throw new NotFoundException(`Consulta con ID: ${term}, no encontrado`);
+
     return consulta;
   }
 
@@ -65,8 +63,9 @@ export class ConsultaService {
       })
       .getMany();
 
-    if (!consulta)
+    if (!consulta || consulta.length === 0)
       throw new NotFoundException(`Consulta con médico: ${term} no encontrado`);
+
     return consulta;
   }
 

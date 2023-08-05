@@ -20,21 +20,21 @@ import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 export class AgendamientoController {
   constructor(private readonly agendamientoService: AgendamientoService) {}
 
-  @Post('register')
-  @Auth(UserRoles.Agendador)
+  @Post('registrar')
+  // @Auth(UserRoles.Agendador)
   create(@Body() createAgendamientoDto: CreateAgendamientoDto) {
     return this.agendamientoService.create(createAgendamientoDto);
   }
 
-  @Get('list')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('listar')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.agendamientoService.findAll(paginationDto);
   }
 
-  @Get('filterByDateRange/:seccion/:startDate/:endDate')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador)
-  numberAppointmentsByDateRange(
+  @Get('buscarPorSeccion&Fechas/:seccion/:startDate/:endDate')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador)
+  findByDateRange(
     @Param('seccion') seccion: string,
     @Param('startDate') startDate: string,
     @Param('endDate') endDate: string,
@@ -46,44 +46,44 @@ export class AgendamientoController {
     );
   }
 
-  @Get('searchByID/:term')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorID/:term')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOneByID(@Param('term', ParseUUIDPipe) term: string) {
     return this.agendamientoService.findOneByID(term);
   }
 
-  @Get('searchByCI/:term')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorCI/:term')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOneByCi(@Param('term') term: string) {
     return this.agendamientoService.findOneByCI(term);
   }
 
-  @Get('searchByArea/:term')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorArea/:term')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findByArea(@Param('term') term: string) {
     return this.agendamientoService.findAllByArea(term);
   }
 
-  @Get('searchBySeccion/:term')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorSeccion/:term')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findBySeccion(@Param('term') term: string) {
     return this.agendamientoService.findAllBySeccion(term);
   }
 
-  @Get('searchByPolAndDate/:term/:date')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorEstacion&Fecha/:term/:date')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findByPolAndDate(@Param('term') term: string, @Param('date') date: string) {
     return this.agendamientoService.findByPolAndDate(term, date);
   }
 
-  @Get('searchAllByPol/:term')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('buscarPorEstacion/:term')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAllByPol(@Param('term') term: string) {
     return this.agendamientoService.findAllByPol(term);
   }
 
-  @Patch('update/:id')
-  @Auth(UserRoles.Agendador, UserRoles.Medico)
+  @Patch('actualizar/:id')
+  // @Auth(UserRoles.Agendador, UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAgendamientoDto: UpdateAgendamientoDto,
@@ -91,8 +91,8 @@ export class AgendamientoController {
     return this.agendamientoService.update(id, updateAgendamientoDto);
   }
 
-  @Delete('delete/:id')
-  @Auth(UserRoles.Agendador)
+  @Delete('eliminar/:id')
+  // @Auth(UserRoles.Agendador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.agendamientoService.remove(id);
   }

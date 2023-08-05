@@ -13,7 +13,7 @@ import { Usuario } from '../../usuario/entities/usuario.entity';
 @Entity()
 export class Agendamiento {
   @PrimaryGeneratedColumn('uuid')
-  id_agenda: string;
+  id_agendamiento: string;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.agendamiento, {
     onDelete: 'CASCADE',
@@ -45,22 +45,17 @@ export class Agendamiento {
   tipo_agenda: string;
 
   @Column({
-    type: 'text',
+    type: 'timestamp without time zone',
     nullable: false,
+    default: () => 'NOW()',
   })
-  area_agenda: string;
+  fecha_agenda: Date;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  seccion_agenda: string;
-
-  @Column({
-    type: 'text',
-    nullable: false,
-  })
-  pol_agenda: string;
+  estado_agenda;
 
   @Column({
     type: 'date',
@@ -75,28 +70,21 @@ export class Agendamiento {
   hora_consulta: Date;
 
   @Column({
-    type: 'timestamp without time zone',
-    nullable: false,
-    default: () => 'NOW()',
-  })
-  fecha_agenda: Date;
-
-  @Column({
     type: 'text',
     nullable: true,
   })
   observaciones: string;
 
   @Column({
-    type: 'text',
-    nullable: false,
-  })
-  appointment_status;
-
-  @Column({
     type: 'boolean',
     nullable: false,
     default: false,
   })
-  patient_assistance: boolean;
+  pac_asistencia: boolean;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  agendado_por: string;
 }

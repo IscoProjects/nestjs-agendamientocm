@@ -18,37 +18,37 @@ import { Auth } from 'src/usuario/decorators/auth.decorator';
 export class SeccionController {
   constructor(private readonly seccionService: SeccionService) {}
 
-  @Post('register')
+  @Post('registrar')
   @Auth(UserRoles.Administrador)
   create(@Body() createSeccionDto: CreateSeccionDto) {
     return this.seccionService.create(createSeccionDto);
   }
 
-  @Get('list')
+  @Get('listar')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll() {
     return this.seccionService.findAll();
   }
 
-  @Get('listActiveOnly')
+  @Get('listar-activos')
   @Auth(UserRoles.Agendador, UserRoles.Administrador)
   findSeccionAndPol() {
     return this.seccionService.findSeccionAndPol();
   }
 
-  @Get('search/:term')
+  @Get('buscar/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.seccionService.findOne(term);
   }
 
-  @Get('searchByArea/:term')
+  @Get('buscarPorArea/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findByArea(@Param('term') term: string) {
     return this.seccionService.findByArea(term);
   }
 
-  @Patch('update/:id')
+  @Patch('actualizar/:id')
   @Auth(UserRoles.Administrador)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -57,7 +57,7 @@ export class SeccionController {
     return this.seccionService.update(id, updateSeccionDto);
   }
 
-  @Delete('delete/:id')
+  @Delete('eliminar/:id')
   @Auth(UserRoles.Administrador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.seccionService.remove(id);
