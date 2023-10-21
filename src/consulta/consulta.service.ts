@@ -38,10 +38,10 @@ export class ConsultaService {
     return consulta;
   }
 
-  async findOne(term: string) {
+  async findOne(id: string) {
     const consulta: Consulta = await this.consultaRepository.findOne({
       where: {
-        id_consulta: term,
+        id_consulta: id,
       },
       relations: {
         agendamiento: true,
@@ -49,14 +49,14 @@ export class ConsultaService {
     });
 
     if (!consulta)
-      throw new NotFoundException(`Consulta con ID: ${term}, no encontrado`);
+      throw new NotFoundException(`Consulta con ID: ${id}, no encontrado`);
 
     return consulta;
   }
 
-  async findOneByMed(term: string) {
-    const queryBuilder = this.consultaRepository.createQueryBuilder('consulta');
-    const consulta = await queryBuilder
+  async findOneByProfessional(term: string) {
+    const consulta = await this.consultaRepository
+      .createQueryBuilder('consulta')
       .leftJoinAndSelect('consulta.agendamiento', 'agendamiento')
       .where('med_responsable=:med_responsable', {
         med_responsable: term,

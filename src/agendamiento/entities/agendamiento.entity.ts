@@ -42,20 +42,20 @@ export class Agendamiento {
     type: 'text',
     nullable: false,
   })
-  tipo_agenda: string;
-
-  @Column({
-    type: 'timestamp without time zone',
-    nullable: false,
-    default: () => 'NOW()',
-  })
-  fecha_agenda: Date;
+  canal_agenda: string;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  estado_agenda;
+  detalle_agenda: string;
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: false,
+    default: () => 'NOW()',
+  })
+  fecha_agenda: Date;
 
   @Column({
     type: 'date',
@@ -70,10 +70,11 @@ export class Agendamiento {
   hora_consulta: Date;
 
   @Column({
-    type: 'text',
-    nullable: true,
+    type: 'boolean',
+    nullable: false,
+    default: true,
   })
-  observaciones: string;
+  estado_agenda;
 
   @Column({
     type: 'boolean',
@@ -81,6 +82,18 @@ export class Agendamiento {
     default: false,
   })
   pac_asistencia: boolean;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  pac_afiliacion: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  observaciones: string;
 
   @Column({
     type: 'text',

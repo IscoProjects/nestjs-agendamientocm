@@ -12,10 +12,10 @@ export class CreateAgendamientoDto {
   paciente: Paciente;
 
   @IsString()
-  tipo_agenda: string;
+  canal_agenda: string;
 
   @IsString()
-  estado_agenda: string;
+  detalle_agenda: string;
 
   @IsDateString()
   fecha_consulta: string;
@@ -23,11 +23,17 @@ export class CreateAgendamientoDto {
   @IsString()
   hora_consulta: Date;
 
-  @IsString()
-  observaciones: string;
+  @IsBoolean()
+  estado_agenda: boolean;
 
   @IsBoolean()
   pac_asistencia: boolean;
+
+  @IsString()
+  pac_afiliacion: string;
+
+  @IsString()
+  observaciones: string;
 
   @IsString()
   @IsUUID()

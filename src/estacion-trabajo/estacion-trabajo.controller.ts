@@ -14,46 +14,37 @@ import { UpdateEstacionTrabajoDto } from './dto/update-estacion-trabajo.dto';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
 
-@Controller('estacion-trabajo')
+@Controller('workstation')
 export class EstacionTrabajoController {
   constructor(
     private readonly estacionTrabajoService: EstacionTrabajoService,
   ) {}
 
-  @Post('registrar')
+  @Post('create')
   @Auth(UserRoles.Administrador)
   create(@Body() createEstacionTrabajoDto: CreateEstacionTrabajoDto) {
     return this.estacionTrabajoService.create(createEstacionTrabajoDto);
   }
 
-  @Get('listar')
+  @Get('list')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll() {
     return this.estacionTrabajoService.findAll();
   }
 
-  @Get('buscar/:term')
+  @Get('search/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findOne(@Param('term') term: string) {
     return this.estacionTrabajoService.findOne(term);
   }
 
-  @Get('buscarPorSeccion/:term')
+  @Get('searchBySection/:term')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAllBySection(@Param('term') term: string) {
     return this.estacionTrabajoService.findAllBySection(term);
   }
 
-  @Get('buscarPorSeccion&Fecha/:term/:date')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findAllBySectionAndDate(
-    @Param('term') term: string,
-    @Param('date') date: string,
-  ) {
-    return this.estacionTrabajoService.findAllBySectionAndDate(term, date);
-  }
-
-  @Patch('actualizar/:id')
+  @Patch('update/:id')
   @Auth(UserRoles.Administrador)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,7 +53,7 @@ export class EstacionTrabajoController {
     return this.estacionTrabajoService.update(id, updateEstacionTrabajoDto);
   }
 
-  @Delete('eliminar/:id')
+  @Delete('delete/:id')
   @Auth(UserRoles.Administrador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.estacionTrabajoService.remove(id);

@@ -67,6 +67,25 @@ export class PacienteService {
     return paciente;
   }
 
+  async findPatientInformation(term: string) {
+    const paciente = await this.pacienteRepository
+      .createQueryBuilder('paciente')
+      .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
+      .leftJoinAndSelect('agendamiento.consulta', 'consulta')
+      .where((qb) => {
+        if (isUUID(term)) {
+          qb.where('paciente.id_paciente = :id', { id: term });
+        } else {
+          qb.where('paciente.pac_cedula = :cedula', {
+            cedula: term,
+          });
+        }
+      })
+      .orderBy('agendamiento.fecha_consulta', 'DESC')
+      .getOne();
+    return paciente;
+  }
+
   async update(id: string, updatePacienteDto: UpdatePacienteDto) {
     const paciente = await this.pacienteRepository.preload({
       id_paciente: id,

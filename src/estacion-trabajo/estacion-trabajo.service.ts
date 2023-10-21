@@ -32,9 +32,6 @@ export class EstacionTrabajoService {
       .leftJoinAndSelect('estacion.seccion', 'seccion')
       .getMany();
 
-    if (!estacion)
-      throw new NotFoundException(`No existe información para mostrar`);
-
     return estacion;
   }
 
@@ -79,60 +76,7 @@ export class EstacionTrabajoService {
       .orderBy('estacion.descripcion', 'ASC')
       .getMany();
 
-    if (!estacion || estacion.length === 0)
-      throw new NotFoundException(
-        `Estación de trabajo para la sección: '${term}', no encontrados`,
-      );
-
     return estacion;
-  }
-
-  async findAllBySectionAndDate(term: string, date: string) {
-    const queryBuilder = this.estacionRepository
-      .createQueryBuilder('estacion')
-      .leftJoinAndSelect('estacion.usuario', 'usuario')
-      .leftJoinAndSelect('estacion.seccion', 'seccion')
-      .leftJoinAndSelect(
-        'usuario.agendamiento',
-        'agendamiento',
-        'agendamiento.fecha_consulta = :date',
-        { date },
-      );
-
-    let estaciones: EstacionTrabajo[];
-
-    if (isUUID(term)) {
-      estaciones = await queryBuilder
-        .where('seccion.id_seccion = :id', { id: term })
-        .orderBy('estacion.descripcion', 'ASC')
-        .getMany();
-    } else {
-      estaciones = await queryBuilder
-        .where('seccion.descripcion = :descripcion', {
-          descripcion: term,
-        })
-        .orderBy('estacion.descripcion', 'ASC')
-        .getMany();
-    }
-
-    if (estaciones.length === 0) {
-      estaciones = await this.estacionRepository.find({
-        relations: {
-          usuario: true,
-          seccion: true,
-        },
-        where: isUUID(term)
-          ? { seccion: { id_seccion: term } }
-          : { seccion: { descripcion: term } },
-      });
-    }
-
-    if (estaciones.length === 0)
-      throw new NotFoundException(
-        `Estaciones para la sección; '${term}', no encontrados.`,
-      );
-
-    return estaciones;
   }
 
   async update(id: string, updateEstacionTrabajoDto: UpdateEstacionTrabajoDto) {

@@ -1,4 +1,4 @@
-import { IsDateString, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsNumber, IsString, IsUUID } from 'class-validator';
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
 
 export class CreateConsultaDto {
@@ -20,10 +20,10 @@ export class CreateConsultaDto {
   hora_fin: Date;
 
   @IsString()
-  tiempo_consulta: Date;
+  tiempo_consulta: string;
 
-  @IsString()
-  tiempo_espera: Date;
+  @IsNumber()
+  tiempo_espera: number;
 
   @IsString()
   observaciones: string;

@@ -16,35 +16,35 @@ import { UpdateConsultaDto } from './dto/update-consulta.dto';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 
-@Controller('consulta')
+@Controller('appointment')
 export class ConsultaController {
   constructor(private readonly consultaService: ConsultaService) {}
 
-  @Post('registrar')
+  @Post('create')
   @Auth(UserRoles.Medico)
   create(@Body() createConsultaDto: CreateConsultaDto) {
     return this.consultaService.create(createConsultaDto);
   }
 
-  @Get('listar')
+  @Get('list')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.consultaService.findAll(paginationDto);
   }
 
-  @Get('buscarPorID/:term')
+  @Get('search/:id')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
-  findOne(@Param('term', ParseUUIDPipe) term: string) {
-    return this.consultaService.findOne(term);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.consultaService.findOne(id);
   }
 
-  @Get('buscarPorMedico/:term')
+  @Get('searchByProfessional/:term')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   findOneByMed(@Param('term', ParseUUIDPipe) term: string) {
-    return this.consultaService.findOneByMed(term);
+    return this.consultaService.findOneByProfessional(term);
   }
 
-  @Patch('actualizar/:id')
+  @Patch('update/:id')
   @Auth(UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -53,7 +53,7 @@ export class ConsultaController {
     return this.consultaService.update(id, updateConsultaDto);
   }
 
-  @Delete('eliminar/:id')
+  @Delete('delete/:id')
   @Auth(UserRoles.Medico)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.consultaService.remove(id);

@@ -40,48 +40,13 @@ export class AgendamientoService {
       },
     });
 
-    return agendamiento.map((agendamiento) => ({
-      ...agendamiento,
-    }));
-  }
-
-  async findByDateRange(seccion: string, startDate: string, endDate: string) {
-    // const agendamientos = await this.agendamientoRepository.find({
-    //   where: {
-    //     seccion_agenda: seccion,
-    //     fecha_consulta: Between(startDate, endDate),
-    //   },
-    // });
-
-    // if (!agendamientos)
-    //   throw new NotFoundException(
-    //     `No existen agendamientos entre las dos fechas.`,
-    //   );
-
-    const agendamiento = await this.agendamientoRepository
-      .createQueryBuilder('agendamiento')
-      .innerJoin('agendamiento.usuario', 'usuario')
-      .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
-      .innerJoin('estacion_trabajo.seccion', 'seccion')
-      .where('seccion.descripcion = :seccion', { seccion })
-      .andWhere('agendamiento.fecha_consulta BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      })
-      .getMany();
-
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para: ${seccion} no encontrados.`,
-      );
-
     return agendamiento;
   }
 
-  async findOneByID(term: string) {
+  async findOneByID(id: string) {
     const agendamiento = await this.agendamientoRepository.findOne({
       where: {
-        id_agendamiento: term,
+        id_agendamiento: id,
       },
       relations: {
         paciente: true,
@@ -89,154 +54,87 @@ export class AgendamientoService {
       },
     });
 
-    if (!agendamiento)
-      throw new NotFoundException(`Agendamiento con ID: ${term} no encontrado`);
-
     return agendamiento;
   }
 
-  async findOneByCI(term: string) {
-    const agendamiento = await this.agendamientoRepository.find({
-      relations: {
-        paciente: true,
-        consulta: true,
-      },
-      where: {
-        paciente: {
-          pac_cedula: term,
-        },
-      },
-    });
-
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para CI: ${term}, no encontrados`,
-      );
-
-    return agendamiento;
-  }
-
-  async findAllByArea(term: string) {
-    // const agendamiento = await this.agendamientoRepository.find({
-    //   where: {
-    //     area_agenda: term,
-    //   },
-    //   relations: {
-    //     paciente: true,
-    //     consulta: true,
-    //   },
-    //   order: {
-    //     hora_consulta: 'ASC',
-    //   },
-    // });
-
+  async findAllByStation(station: string) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
-      .innerJoin('agendamiento.usuario', 'usuario')
+      .innerJoinAndSelect('agendamiento.usuario', 'usuario')
       .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
-      .innerJoin('estacion_trabajo.seccion', 'seccion')
-      .innerJoin('seccion.area', 'area')
-      .where('area.descripcion = :term', { term })
+      .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+      .where('estacion_trabajo.descripcion = :station', { station })
       .getMany();
 
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para: ${term}, no encontrado`,
-      );
-
     return agendamiento;
   }
 
-  async findAllBySeccion(term: string) {
-    // const agendamiento = await this.agendamientoRepository.find({
-    //   where: {
-    //     seccion_agenda: term,
-    //   },
-    //   relations: {
-    //     paciente: true,
-    //     consulta: true,
-    //   },
-    //   order: {
-    //     hora_consulta: 'ASC',
-    //   },
-    // });
-
+  async findAllByProfessional(id: string) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
-      .innerJoin('agendamiento.usuario', 'usuario')
-      .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
-      .innerJoin('estacion_trabajo.seccion', 'seccion')
-      .where('seccion.descripcion = :term', { term })
+      .innerJoinAndSelect('agendamiento.usuario', 'usuario')
+      .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+      .where('usuario.id_usuario = :id', { id })
       .getMany();
 
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para: ${term}, no encontrado`,
-      );
-
     return agendamiento;
   }
 
-  async findByPolAndDate(term: string, date: string) {
-    // const agendamiento = await this.agendamientoRepository.find({
-    //   where: {
-    //     pol_agenda: term,
-    //     fecha_consulta: date,
-    //   },
-    //   relations: {
-    //     paciente: true,
-    //   },
-    //   order: {
-    //     hora_consulta: 'ASC',
-    //   },
-    // });
-
+  async findEnabledAgendaByProfessional(id: string) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
-      .innerJoin('agendamiento.usuario', 'usuario')
-      .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
-      .where('estacion_trabajo.descripcion = :term', { term })
-      .andWhere('agendamiento.fecha_consulta = :date', {
-        date,
+      .innerJoinAndSelect('agendamiento.usuario', 'usuario')
+      .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+      .where('usuario.id_usuario = :id', { id })
+      .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
+        demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
       })
       .getMany();
 
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para el polivalente: ${term}, no encontrados.`,
-      );
+    return agendamiento;
+  }
+
+  async findByProfessionalAndDate(id: string, date: string) {
+    const agendamiento = await this.agendamientoRepository
+      .createQueryBuilder('agendamiento')
+      .leftJoinAndSelect('agendamiento.usuario', 'usuario')
+      .leftJoinAndSelect('agendamiento.paciente', 'paciente')
+      .leftJoinAndSelect('agendamiento.consulta', 'consulta')
+      .where('usuario.id_usuario = :id', { id: id })
+      .andWhere('agendamiento.fecha_consulta = :date', { date: date })
+      .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
+        demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
+      })
+      .getMany();
 
     return agendamiento;
   }
 
-  async findAllByPol(term: string) {
-    // const agendamiento = await this.agendamientoRepository.find({
-    //   where: {
-    //     pol_agenda: term,
-    //     appointment_status: Not('Cancelado'),
-    //   },
-    //   relations: {
-    //     paciente: true,
-    //     consulta: true,
-    //   },
-    //   order: {
-    //     hora_consulta: 'ASC',
-    //   },
-    // });
+  async getAVGWaitingTime(days: number) {
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
 
-    const agendamiento = await this.agendamientoRepository
+    const limitDate = new Date();
+    limitDate.setDate(limitDate.getDate() - days);
+    limitDate.setHours(0, 0, 0, 0);
+
+    const promediosPorDia = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
-      .innerJoin('agendamiento.usuario', 'usuario')
-      .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
-      .where('estacion_trabajo.descripcion = :term', { term })
-      .getMany();
+      .innerJoin('agendamiento.consulta', 'consulta')
+      .select([
+        'DATE(agendamiento.fecha_agenda) AS dia',
+        'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
+      ])
+      .where('agendamiento.fecha_agenda >= :limitDate', { limitDate })
+      .andWhere('consulta.hora_inicio IS NOT NULL')
+      .groupBy('dia')
+      .orderBy('dia', 'ASC')
+      .getRawMany();
 
-    if (!agendamiento || agendamiento.length === 0)
-      throw new NotFoundException(
-        `Agendamiento(s) para: ${term}, no encontrado`,
-      );
-
-    return agendamiento;
+    return promediosPorDia.map((item) => ({
+      dia: item.dia,
+      tiempo_espera_promedio: parseFloat(item.tiempo_espera_promedio) || 0,
+    }));
   }
 
   async update(id: string, updateAgendamientoDto: UpdateAgendamientoDto) {

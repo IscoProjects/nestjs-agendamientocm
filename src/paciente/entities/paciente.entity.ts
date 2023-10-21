@@ -52,21 +52,33 @@ export class Paciente {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
-  pac_gprioritario: string;
+  pac_provincia: string;
 
   @Column({
     type: 'text',
     nullable: true,
   })
-  pac_afiliacion: string;
+  pac_canton: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  pac_direccion: string;
+
+  @Column({
+    type: 'text',
+    array: true,
+  })
+  pac_gprioritario: string[];
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  pac_referencia: string;
+  pac_ref_person: string;
 
   @Column({
     type: 'text',
@@ -80,12 +92,6 @@ export class Paciente {
   })
   pac_ref_telefono: string;
 
-  @Column({
-    type: 'text',
-    nullable: false,
-  })
-  pac_ref_direccion: string;
-
   @OneToMany(() => Agendamiento, (agendamiento) => agendamiento.paciente, {
     nullable: false,
     cascade: true,
@@ -94,9 +100,6 @@ export class Paciente {
 
   @BeforeInsert()
   checkCIInsert() {
-    // if (!this.pac_cedula) {
-    //   this.pac_cedula = pac.med_nombre;
-    // }
     this.pac_cedula = this.pac_cedula.replaceAll(' ', '');
   }
 

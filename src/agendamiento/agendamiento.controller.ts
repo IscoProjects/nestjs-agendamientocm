@@ -16,74 +16,63 @@ import { Query } from '@nestjs/common/decorators';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 
-@Controller('agendamiento')
+@Controller('scheduling')
 export class AgendamientoController {
   constructor(private readonly agendamientoService: AgendamientoService) {}
 
-  @Post('registrar')
-  // @Auth(UserRoles.Agendador)
+  @Post('create')
+  @Auth(UserRoles.Agendador)
   create(@Body() createAgendamientoDto: CreateAgendamientoDto) {
     return this.agendamientoService.create(createAgendamientoDto);
   }
 
-  @Get('listar')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @Get('list')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.agendamientoService.findAll(paginationDto);
   }
 
-  @Get('buscarPorSeccion&Fechas/:seccion/:startDate/:endDate')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador)
-  findByDateRange(
-    @Param('seccion') seccion: string,
-    @Param('startDate') startDate: string,
-    @Param('endDate') endDate: string,
+  @Get('searchByID/:id')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findOneByID(@Param('id', ParseUUIDPipe) id: string) {
+    return this.agendamientoService.findOneByID(id);
+  }
+
+  @Get('searchByStation/:station')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAllByPol(@Param('station') station: string) {
+    return this.agendamientoService.findAllByStation(station);
+  }
+
+  @Get('searchByProfessional/:id')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findAllByProfessional(@Param('id', ParseUUIDPipe) id: string) {
+    return this.agendamientoService.findAllByProfessional(id);
+  }
+
+  @Get('searchScheduleByProfessional/:id')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findEnabledAgendaByProfessional(@Param('id', ParseUUIDPipe) id: string) {
+    return this.agendamientoService.findEnabledAgendaByProfessional(id);
+  }
+
+  @Get('searchByProfessional&Date/:id/:date')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  findByProfessionalAndDate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('date') date: string,
   ) {
-    return this.agendamientoService.findByDateRange(
-      seccion,
-      startDate,
-      endDate,
-    );
+    return this.agendamientoService.findByProfessionalAndDate(id, date);
   }
 
-  @Get('buscarPorID/:term')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOneByID(@Param('term', ParseUUIDPipe) term: string) {
-    return this.agendamientoService.findOneByID(term);
+  @Get('avgWaitingTime/:days')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  getAVGWaitingTime(@Param('days') days: number) {
+    return this.agendamientoService.getAVGWaitingTime(days);
   }
 
-  @Get('buscarPorCI/:term')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findOneByCi(@Param('term') term: string) {
-    return this.agendamientoService.findOneByCI(term);
-  }
-
-  @Get('buscarPorArea/:term')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findByArea(@Param('term') term: string) {
-    return this.agendamientoService.findAllByArea(term);
-  }
-
-  @Get('buscarPorSeccion/:term')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findBySeccion(@Param('term') term: string) {
-    return this.agendamientoService.findAllBySeccion(term);
-  }
-
-  @Get('buscarPorEstacion&Fecha/:term/:date')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findByPolAndDate(@Param('term') term: string, @Param('date') date: string) {
-    return this.agendamientoService.findByPolAndDate(term, date);
-  }
-
-  @Get('buscarPorEstacion/:term')
-  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  findAllByPol(@Param('term') term: string) {
-    return this.agendamientoService.findAllByPol(term);
-  }
-
-  @Patch('actualizar/:id')
-  // @Auth(UserRoles.Agendador, UserRoles.Medico)
+  @Patch('update/:id')
+  @Auth(UserRoles.Agendador, UserRoles.Medico)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAgendamientoDto: UpdateAgendamientoDto,
@@ -91,8 +80,8 @@ export class AgendamientoController {
     return this.agendamientoService.update(id, updateAgendamientoDto);
   }
 
-  @Delete('eliminar/:id')
-  // @Auth(UserRoles.Agendador)
+  @Delete('delete/:id')
+  @Auth(UserRoles.Agendador)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.agendamientoService.remove(id);
   }

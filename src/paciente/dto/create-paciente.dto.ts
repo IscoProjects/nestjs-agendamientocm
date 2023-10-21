@@ -1,4 +1,10 @@
-import { IsDateString, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreatePacienteDto {
   @IsString()
@@ -22,14 +28,21 @@ export class CreatePacienteDto {
   @MaxLength(12)
   pac_telefono: string;
 
-  @IsString()
-  pac_gprioritario: string;
+  @IsArray()
+  @IsString({ each: true })
+  pac_gprioritario: string[];
 
   @IsString()
-  pac_afiliacion: string;
+  pac_provincia: string;
 
   @IsString()
-  pac_referencia: string;
+  pac_canton: string;
+
+  @IsString()
+  pac_direccion: string;
+
+  @IsString()
+  pac_ref_person: string;
 
   @IsString()
   pac_ref_parentesco: string;
@@ -37,7 +50,4 @@ export class CreatePacienteDto {
   @IsString()
   @MaxLength(15)
   pac_ref_telefono: string;
-
-  @IsString()
-  pac_ref_direccion: string;
 }

@@ -36,8 +36,6 @@ export class AreaService {
       },
     });
 
-    if (!area) throw new NotFoundException(`No existen datos para mostrar.`);
-
     return area;
   }
 
@@ -47,8 +45,6 @@ export class AreaService {
         seccion: true,
       },
     });
-
-    if (!area) throw new NotFoundException(`No existen datos para mostrar.`);
 
     return area;
   }

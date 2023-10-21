@@ -36,7 +36,7 @@ export class SeccionService {
     return seccion;
   }
 
-  async findSeccionAndPol() {
+  async findSeccionAndPolEnabled() {
     const seccion = await this.seccionRepository.find({
       relations: {
         estacion_trabajo: true,
@@ -53,65 +53,25 @@ export class SeccionService {
   }
 
   async findOne(term: string) {
-    let seccion: Seccion;
-
-    if (isUUID(term)) {
-      seccion = await this.seccionRepository.findOne({
-        where: {
-          id_seccion: term,
-        },
-        relations: {
-          estacion_trabajo: true,
-        },
-      });
-    } else {
-      const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
-      seccion = await queryBuilder
-        .leftJoinAndSelect('seccion.estacion_trabajo', 'estacion_trabajo')
-        .where('seccion.descripcion=:descripcion', {
-          descripcion: term,
-        })
-        .getOne();
-    }
-
-    if (!seccion)
-      throw new NotFoundException(
-        `Búsqueda para sección: ${term}, sin resultados`,
-      );
+    const seccion = await this.seccionRepository
+      .createQueryBuilder('seccion')
+      .leftJoinAndSelect('seccion.estacion_trabajo', 'estacion_trabajo')
+      .where((qb) => {
+        if (isUUID(term)) {
+          qb.where('seccion.id_seccion = :id', { id: term });
+        } else {
+          qb.where('seccion.descripcion = :descripcion', {
+            descripcion: term,
+          });
+        }
+      })
+      .getOne();
 
     return seccion;
   }
 
   //Buscar secciones que pertenecen a un Area
   async findByArea(term: string) {
-    // let seccion: Seccion[];
-
-    // if (isUUID(term)) {
-    //   seccion = await this.seccionRepository.find({
-    //     where: {
-    //       area: {
-    //         id_area: term,
-    //       },
-    //     },
-    //     relations: {
-    //       area: true,
-    //     },
-    //   });
-    // } else {
-    //   const queryBuilder = this.seccionRepository.createQueryBuilder('seccion');
-    //   seccion = await queryBuilder
-    //     .leftJoinAndSelect('seccion.area', 'area')
-    //     .where('area.descripcion = :term', { term })
-    //     .getMany();
-    // }
-
-    // if (!seccion)
-    //   throw new NotFoundException(
-    //     `Seccion(es) pertenecientes al área con ID: ${term} no encontrado`,
-    //   );
-
-    // return seccion;
-
     const seccion = await this.seccionRepository
       .createQueryBuilder('seccion')
       .leftJoinAndSelect('seccion.area', 'area')
@@ -126,13 +86,35 @@ export class SeccionService {
       })
       .getMany();
 
-    if (!seccion || seccion.length === 0) {
-      throw new NotFoundException(
-        `Sección(es) pertenecientes al área: ${term} no encontradas`,
-      );
-    }
-
     return seccion;
+  }
+
+  async getAvgWaitingTimeBySeccion(days: number) {
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+
+    const limitDate = new Date();
+    limitDate.setDate(limitDate.getDate() - days);
+    limitDate.setHours(0, 0, 0, 0);
+
+    const avgSeccion = await this.seccionRepository
+      .createQueryBuilder('seccion')
+      .leftJoin('seccion.estacion_trabajo', 'estacion_trabajo')
+      .leftJoin('estacion_trabajo.usuario', 'usuario')
+      .leftJoin('usuario.agendamiento', 'agendamiento')
+      .leftJoin('agendamiento.consulta', 'consulta')
+      .select([
+        'seccion.descripcion AS seccion',
+        'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
+      ])
+      .where('agendamiento.fecha_agenda >= :limitDate', { limitDate })
+      .groupBy('seccion.descripcion')
+      .getRawMany();
+
+    return avgSeccion.map((item) => ({
+      seccion: item.seccion,
+      tiempo_espera_promedio: parseFloat(item.tiempo_espera_promedio) || 0,
+    }));
   }
 
   async update(id: string, updateSeccionDto: UpdateSeccionDto) {

@@ -51,10 +51,10 @@ export class Consulta {
   tiempo_consulta: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'integer',
     nullable: false,
   })
-  tiempo_espera: Date;
+  tiempo_espera: number;
 
   @Column({
     type: 'text',

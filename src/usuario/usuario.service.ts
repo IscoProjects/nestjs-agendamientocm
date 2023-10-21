@@ -93,6 +93,45 @@ export class UsuarioService {
     return true;
   }
 
+  async findBySection(term: string) {
+    const user = await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .innerJoinAndSelect('usuario.estacion_trabajo', 'estacion_trabajo')
+      .innerJoinAndSelect('estacion_trabajo.seccion', 'seccion')
+      .where('seccion.descripcion = :term', { term })
+      .getMany();
+
+    return user;
+  }
+
+  async findAVGByProfessional(id: string) {
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+
+    const limitDate = new Date();
+    limitDate.setDate(limitDate.getDate() - 14);
+    limitDate.setHours(0, 0, 0, 0);
+
+    const promediosPorDia = await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .innerJoin('usuario.agendamiento', 'agendamiento')
+      .innerJoin('agendamiento.consulta', 'consulta')
+      .select([
+        'DATE(agendamiento.fecha_agenda) AS dia',
+        'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
+      ])
+      .where('usuario.id_usuario = :id', { id })
+      .andWhere('agendamiento.fecha_agenda >= :limitDate', { limitDate })
+      .andWhere('consulta.hora_inicio IS NOT NULL')
+      .groupBy('dia')
+      .getRawMany();
+
+    return promediosPorDia.map((item) => ({
+      dia: item.dia,
+      tiempo_espera_promedio: parseFloat(item.tiempo_espera_promedio) || 0,
+    }));
+  }
+
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
     const user = await this.usuarioRepository.preload({
       id_usuario: id,
@@ -140,12 +179,6 @@ export class UsuarioService {
         us_role: true,
         id_usuario: true,
         us_isActive: true,
-        estacion_trabajo: {
-          descripcion: true,
-        },
-      },
-      relations: {
-        estacion_trabajo: true,
       },
     });
 
@@ -155,21 +188,22 @@ export class UsuarioService {
     if (!user.us_isActive) {
       throw new UnauthorizedException('Usuario no activo');
     }
-    if (!bcrypt.compareSync(us_password, user.us_password)) {
+
+    const passwordMatch = await bcrypt.compareSync(
+      us_password,
+      user.us_password,
+    );
+    if (!passwordMatch) {
       throw new UnauthorizedException('Credenciales no válidas');
     }
 
     return {
-      ok: true,
-      ...user,
-      token: this.getJwtToken({ id_usuario: user.id_usuario }),
-    };
-  }
-
-  async checkStatus(user: Usuario) {
-    return {
-      ok: true,
-      ...user,
+      user: {
+        id_usuario: user.id_usuario,
+        us_isActive: user.us_isActive,
+        us_user: user.us_user,
+        us_role: user.us_role,
+      },
       token: this.getJwtToken({ id_usuario: user.id_usuario }),
     };
   }
@@ -177,5 +211,17 @@ export class UsuarioService {
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
+  }
+
+  async checkStatus(user: Usuario) {
+    return {
+      user: {
+        id_usuario: user.id_usuario,
+        us_isActive: user.us_isActive,
+        us_user: user.us_user,
+        us_role: user.us_role,
+      },
+      token: this.getJwtToken({ id_usuario: user.id_usuario }),
+    };
   }
 }
