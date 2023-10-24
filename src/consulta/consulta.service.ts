@@ -54,17 +54,17 @@ export class ConsultaService {
     return consulta;
   }
 
-  async findOneByProfessional(term: string) {
+  async findOneByProfessional(id: string) {
     const consulta = await this.consultaRepository
       .createQueryBuilder('consulta')
       .leftJoinAndSelect('consulta.agendamiento', 'agendamiento')
       .where('med_responsable=:med_responsable', {
-        med_responsable: term,
+        med_responsable: id,
       })
       .getMany();
 
     if (!consulta || consulta.length === 0)
-      throw new NotFoundException(`Consulta con médico: ${term} no encontrado`);
+      throw new NotFoundException(`Consulta con médico: ${id} no encontrado`);
 
     return consulta;
   }

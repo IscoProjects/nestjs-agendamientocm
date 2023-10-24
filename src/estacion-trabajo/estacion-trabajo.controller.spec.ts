@@ -11,7 +11,9 @@ describe('EstacionTrabajoController', () => {
       providers: [EstacionTrabajoService],
     }).compile();
 
-    controller = module.get<EstacionTrabajoController>(EstacionTrabajoController);
+    controller = module.get<EstacionTrabajoController>(
+      EstacionTrabajoController,
+    );
   });
 
   it('should be defined', () => {

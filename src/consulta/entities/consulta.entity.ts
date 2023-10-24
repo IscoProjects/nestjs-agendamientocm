@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Agendamiento } from 'src/agendamiento/entities/agendamiento.entity';
 import {
   Column,
@@ -9,6 +10,11 @@ import {
 
 @Entity()
 export class Consulta {
+  @ApiProperty({
+    example: '44cb3359-270a-483b-8011-23bc75b0b2de',
+    description: 'Medical Appointment ID',
+    uniqueItems: true,
+  })
   @PrimaryGeneratedColumn('uuid')
   id_consulta: string;
 
@@ -19,12 +25,20 @@ export class Consulta {
   @JoinColumn()
   agendamiento: Agendamiento;
 
+  @ApiProperty({
+    example: '4b720a22-5e2a-40d8-8ad7-299b7d570967',
+    description: 'Professional ID',
+  })
   @Column({
     type: 'text',
     nullable: false,
   })
   med_responsable: string;
 
+  @ApiProperty({
+    example: '2023-10-25',
+    description: 'Medical Appointment Date',
+  })
   @Column({
     type: 'date',
     nullable: false,
@@ -32,30 +46,41 @@ export class Consulta {
   })
   fecha: Date;
 
+  @ApiProperty({
+    example: '10:00:00',
+    description: 'Medical Appointment Start Time',
+  })
   @Column({
     type: 'time without time zone',
     nullable: false,
   })
   hora_inicio: Date;
 
+  @ApiProperty({
+    example: '10:30:00',
+    description: 'Medical Appointment End Time',
+  })
   @Column({
     type: 'time without time zone',
     nullable: false,
   })
   hora_fin: Date;
 
-  @Column({
-    type: 'time without time zone',
-    nullable: false,
+  @ApiProperty({
+    example: '30',
+    description: 'Medical Appointment Waiting Time',
   })
-  tiempo_consulta: Date;
-
   @Column({
     type: 'integer',
     nullable: false,
   })
   tiempo_espera: number;
 
+  @ApiProperty({
+    example: 'Interconsulta',
+    description: 'Medical Appointment Observations',
+    nullable: true,
+  })
   @Column({
     type: 'text',
     nullable: true,
