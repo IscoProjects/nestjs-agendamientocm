@@ -57,13 +57,17 @@ export class AgendamientoService {
     return agendamiento;
   }
 
-  async findAllByStation(station: string) {
+  async findAllByStation(station: string, startDate: string, endDate: string) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
       .innerJoinAndSelect('agendamiento.usuario', 'usuario')
       .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
       .innerJoinAndSelect('agendamiento.paciente', 'paciente')
       .where('estacion_trabajo.descripcion = :station', { station })
+      .andWhere('agendamiento.fecha_consulta BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      })
       .getMany();
 
     return agendamiento;
@@ -110,6 +114,21 @@ export class AgendamientoService {
     return agendamiento;
   }
 
+  async findBetweenDates(startDate: string, endDate: string) {
+    const agendamiento = await this.agendamientoRepository
+      .createQueryBuilder('agendamiento')
+      .leftJoinAndSelect('agendamiento.paciente', 'paciente')
+      .leftJoinAndSelect('agendamiento.consulta', 'consulta')
+      .leftJoinAndSelect('agendamiento.usuario', 'usuario')
+      .where('agendamiento.fecha_consulta >= :startDate', {
+        startDate: startDate,
+      })
+      .andWhere('agendamiento.fecha_consulta <= :endDate', { endDate: endDate })
+      .getMany();
+
+    return agendamiento;
+  }
+
   async getAVGWaitingTime(days: number) {
     const startDate = new Date();
     startDate.setHours(0, 0, 0, 0);
@@ -126,7 +145,7 @@ export class AgendamientoService {
         'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
       ])
       .where('agendamiento.fecha_agenda >= :limitDate', { limitDate })
-      .andWhere('consulta.hora_inicio IS NOT NULL')
+      .andWhere('consulta.hora_registro IS NOT NULL')
       .groupBy('dia')
       .orderBy('dia', 'ASC')
       .getRawMany();

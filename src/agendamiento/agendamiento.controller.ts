@@ -90,28 +90,6 @@ export class AgendamientoController {
     return this.agendamientoService.findOneByID(id);
   }
 
-  @Get('searchByWorkStation/:station')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  @ApiOperation({
-    summary: 'Get all schedules by Workstation',
-    description: 'Obtener todos los agendamientos por estación de trabajo',
-  })
-  @ApiParam({
-    name: 'station',
-    description: 'Workstation description',
-    example: 'Odontología',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Ok',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAllByPol(@Param('station') station: string) {
-    return this.agendamientoService.findAllByStation(station);
-  }
-
   @Get('searchByProfessional/:id')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   @ApiOperation({
@@ -185,6 +163,77 @@ export class AgendamientoController {
     @Param('date') date: string,
   ) {
     return this.agendamientoService.findByProfessionalAndDate(id, date);
+  }
+
+  @Get('searchByDates/:startDate/:endDate')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @ApiOperation({
+    summary: 'Get all schedules between dates',
+    description: 'Obtener todos los agendamientos entre fechas',
+  })
+  @ApiParam({
+    name: 'startDate',
+    description: 'Start Date',
+    example: '2023-10-25',
+  })
+  @ApiParam({
+    name: 'endDate',
+    description: 'End Date',
+    example: '2023-10-26',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Ok',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  findBetweenDates(
+    @Param('startDate') startDate: string,
+    @Param('endDate') endDate: string,
+  ) {
+    return this.agendamientoService.findBetweenDates(startDate, endDate);
+  }
+
+  @Get('searchByWorkStationAndDates/:station/:startDate/:endDate')
+  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  @ApiOperation({
+    summary: 'Get all schedules by Workstation and dates',
+    description:
+      'Obtener todos los agendamientos por estación de trabajo y fechas',
+  })
+  @ApiParam({
+    name: 'station',
+    description: 'Workstation description',
+    example: 'Odontología',
+  })
+  @ApiParam({
+    name: 'startDate',
+    description: 'Start Date',
+    example: '2023-10-25',
+  })
+  @ApiParam({
+    name: 'endDate',
+    description: 'End Date',
+    example: '2023-10-26',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Ok',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  findAllByPol(
+    @Param('station') station: string,
+    @Param('startDate') startDate: string,
+    @Param('endDate') endDate: string,
+  ) {
+    return this.agendamientoService.findAllByStation(
+      station,
+      startDate,
+      endDate,
+    );
   }
 
   @Get('avgWaitingTime/:days')

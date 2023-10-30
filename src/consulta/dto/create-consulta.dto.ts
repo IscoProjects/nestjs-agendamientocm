@@ -35,15 +35,7 @@ export class CreateConsultaDto {
     type: 'string',
   })
   @IsString()
-  hora_inicio: Date;
-
-  @ApiProperty({
-    description: 'End time',
-    nullable: false,
-    type: 'string',
-  })
-  @IsString()
-  hora_fin: Date;
+  hora_registro: Date;
 
   @ApiProperty({
     description: 'Waiting time',

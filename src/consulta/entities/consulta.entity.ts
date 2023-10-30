@@ -54,17 +54,7 @@ export class Consulta {
     type: 'time without time zone',
     nullable: false,
   })
-  hora_inicio: Date;
-
-  @ApiProperty({
-    example: '10:30:00',
-    description: 'Medical Appointment End Time',
-  })
-  @Column({
-    type: 'time without time zone',
-    nullable: false,
-  })
-  hora_fin: Date;
+  hora_registro: Date;
 
   @ApiProperty({
     example: '30',

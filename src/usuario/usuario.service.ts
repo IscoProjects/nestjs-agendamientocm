@@ -122,7 +122,7 @@ export class UsuarioService {
       ])
       .where('usuario.id_usuario = :id', { id })
       .andWhere('agendamiento.fecha_agenda >= :limitDate', { limitDate })
-      .andWhere('consulta.hora_inicio IS NOT NULL')
+      .andWhere('consulta.hora_registro IS NOT NULL')
       .groupBy('dia')
       .getRawMany();
 

@@ -16,10 +16,17 @@ import { Auth } from './decorators/auth.decorator';
 import { UserRoles } from './interfaces/user-roles.interface';
 import { GetUser } from './decorators/get-user.decorator';
 import { Usuario } from './entities/usuario.entity';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AVGDayResponse, LoginResponse } from './interfaces/api-response';
 
 @ApiTags('Professional')
+@ApiBearerAuth()
 @Controller('professional')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
