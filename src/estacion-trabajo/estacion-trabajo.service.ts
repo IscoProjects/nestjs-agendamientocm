@@ -26,11 +26,17 @@ export class EstacionTrabajoService {
   }
 
   async findAll() {
-    const estacion = await this.estacionRepository
-      .createQueryBuilder('estacion')
-      .leftJoinAndSelect('estacion.usuario', 'usuario')
-      .leftJoinAndSelect('estacion.seccion', 'seccion')
-      .getMany();
+    const estacion = await this.estacionRepository.find({
+      relations: {
+        seccion: true,
+        usuario: true,
+      },
+      order: {
+        seccion: {
+          descripcion: 'ASC',
+        },
+      },
+    });
 
     return estacion;
   }

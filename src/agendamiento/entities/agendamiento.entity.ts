@@ -112,6 +112,16 @@ export class Agendamiento {
   hora_consulta: Date;
 
   @ApiProperty({
+    example: '30',
+    description: 'Approximate Time of Duration',
+  })
+  @Column({
+    type: 'integer',
+    nullable: false,
+  })
+  duracion_consulta: number;
+
+  @ApiProperty({
     example: 'true',
     description: 'Scheduling status',
     default: false,

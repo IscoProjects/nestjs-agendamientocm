@@ -1,4 +1,10 @@
-import { IsBoolean, IsDateString, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { Paciente } from 'src/paciente/entities/paciente.entity';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -50,6 +56,14 @@ export class CreateAgendamientoDto {
   })
   @IsString()
   hora_consulta: Date;
+
+  @ApiProperty({
+    description: 'Scheduling duration',
+    nullable: false,
+    type: 'integer',
+  })
+  @IsNumber()
+  duracion_consulta: number;
 
   @ApiProperty({
     description: 'Scheduling status',

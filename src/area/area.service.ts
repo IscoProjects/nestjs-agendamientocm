@@ -44,6 +44,9 @@ export class AreaService {
       relations: {
         seccion: true,
       },
+      order: {
+        descripcion: 'ASC',
+      },
     });
 
     return area;

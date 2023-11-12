@@ -31,6 +31,11 @@ export class SeccionService {
         estacion_trabajo: true,
         area: true,
       },
+      order: {
+        area: {
+          descripcion: 'ASC',
+        },
+      },
     });
 
     return seccion;

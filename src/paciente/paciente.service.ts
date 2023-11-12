@@ -71,7 +71,10 @@ export class PacienteService {
     const paciente = await this.pacienteRepository
       .createQueryBuilder('paciente')
       .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
+      .leftJoinAndSelect('agendamiento.usuario', 'usuario')
       .leftJoinAndSelect('agendamiento.consulta', 'consulta')
+      .leftJoinAndSelect('usuario.estacion_trabajo', 'estacion_trabajo')
+      .leftJoinAndSelect('estacion_trabajo.seccion', 'seccion')
       .where((qb) => {
         if (isUUID(term)) {
           qb.where('paciente.id_paciente = :id', { id: term });
@@ -83,6 +86,12 @@ export class PacienteService {
       })
       .orderBy('agendamiento.fecha_consulta', 'DESC')
       .getOne();
+
+    if (!paciente)
+      throw new NotFoundException(
+        `Búsqueda de paciente: ${term}, no encontrado`,
+      );
+
     return paciente;
   }
 

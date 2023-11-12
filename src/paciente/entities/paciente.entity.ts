@@ -102,6 +102,16 @@ export class Paciente {
   pac_canton: string;
 
   @ApiProperty({
+    example: 'Chambo',
+    description: 'Patient Parish',
+  })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  pac_parroquia: string;
+
+  @ApiProperty({
     example: 'Av. Principal',
     description: 'Patient Address',
   })

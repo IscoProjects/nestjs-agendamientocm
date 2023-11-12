@@ -117,7 +117,7 @@ export class UsuarioService {
       .innerJoin('usuario.agendamiento', 'agendamiento')
       .innerJoin('agendamiento.consulta', 'consulta')
       .select([
-        'DATE(agendamiento.fecha_agenda) AS dia',
+        'DATE(agendamiento.fecha_consulta) AS dia',
         'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
       ])
       .where('usuario.id_usuario = :id', { id })

@@ -78,6 +78,13 @@ export class CreatePacienteDto {
   pac_canton: string;
 
   @ApiProperty({
+    description: 'Patient Parish',
+    nullable: false,
+  })
+  @IsString()
+  pac_parroquia: string;
+
+  @ApiProperty({
     description: 'Patient Address',
     nullable: false,
   })
