@@ -124,6 +124,7 @@ export class UsuarioService {
       .andWhere('agendamiento.fecha_agenda >= :limitDate', { limitDate })
       .andWhere('consulta.hora_registro IS NOT NULL')
       .groupBy('dia')
+      .orderBy('dia', 'ASC')
       .getRawMany();
 
     return promediosPorDia.map((item) => ({

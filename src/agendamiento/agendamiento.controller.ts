@@ -112,35 +112,35 @@ export class AgendamientoController {
     return this.agendamientoService.findAllByProfessional(id);
   }
 
-  @Get('searchScheduleByProfessional&Date/:id/:date')
-  @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
-  @ApiOperation({
-    summary: 'Get active schedules by Professional ID',
-    description: 'Obtener agendamientos activos por Profesional ID',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Professional ID',
-    example: '2fd386f9-8521-40d4-babe-800fa6a66558',
-  })
-  @ApiParam({
-    name: 'date',
-    description: 'Current date',
-    example: '2023-10-25',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Ok',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  findEnabledAgendaByProfessional(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('date') date: string,
-  ) {
-    return this.agendamientoService.findEnabledAgendaByProfessional(id, date);
-  }
+  // @Get('searchScheduleByProfessional&Date/:id/:date')
+  // @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
+  // @ApiOperation({
+  //   summary: 'Get active schedules by Professional ID',
+  //   description: 'Obtener agendamientos activos por Profesional ID',
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   description: 'Professional ID',
+  //   example: '2fd386f9-8521-40d4-babe-800fa6a66558',
+  // })
+  // @ApiParam({
+  //   name: 'date',
+  //   description: 'Current date',
+  //   example: '2023-10-25',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Ok',
+  // })
+  // @ApiResponse({ status: 400, description: 'Bad Request' })
+  // @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // @ApiResponse({ status: 403, description: 'Forbidden' })
+  // findEnabledAgendaByProfessional(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  //   @Param('date') date: string,
+  // ) {
+  //   return this.agendamientoService.findEnabledAgendaByProfessional(id, date);
+  // }
 
   @Get('searchByProfessional&Date/:id/:date')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
@@ -234,7 +234,7 @@ export class AgendamientoController {
     return this.agendamientoService.findAllByWorkstationAndDate(station, date);
   }
 
-  @Get('searchByWorkStationAndDates/:station/:startDate/:endDate')
+  @Get('searchByWorkStation&Dates/:station/:startDate/:endDate')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   @ApiOperation({
     summary: 'Get all schedules by Workstation and dates',
@@ -268,7 +268,7 @@ export class AgendamientoController {
     @Param('startDate') startDate: string,
     @Param('endDate') endDate: string,
   ) {
-    return this.agendamientoService.findAllByStation(
+    return this.agendamientoService.findAllByWorkStationAndDates(
       station,
       startDate,
       endDate,

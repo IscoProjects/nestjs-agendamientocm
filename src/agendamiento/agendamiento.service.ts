@@ -61,8 +61,9 @@ export class AgendamientoService {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
       .innerJoinAndSelect('agendamiento.usuario', 'usuario')
-      .innerJoin('usuario.estacion_trabajo', 'estacion_trabajo')
       .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+      .leftJoinAndSelect('usuario.estacion_trabajo', 'estacion_trabajo')
+      .leftJoinAndSelect('estacion_trabajo.seccion', 'seccion')
       .where('estacion_trabajo.descripcion = :station', { station })
       .andWhere('agendamiento.fecha_consulta = :date', {
         date,
@@ -70,12 +71,17 @@ export class AgendamientoService {
       .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
         demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
       })
+      .orderBy('hora_consulta', 'ASC')
       .getMany();
 
     return agendamiento;
   }
 
-  async findAllByStation(station: string, startDate: string, endDate: string) {
+  async findAllByWorkStationAndDates(
+    station: string,
+    startDate: string,
+    endDate: string,
+  ) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
       .innerJoinAndSelect('agendamiento.usuario', 'usuario')
@@ -102,20 +108,20 @@ export class AgendamientoService {
     return agendamiento;
   }
 
-  async findEnabledAgendaByProfessional(id: string, date: string) {
-    const agendamiento = await this.agendamientoRepository
-      .createQueryBuilder('agendamiento')
-      .innerJoinAndSelect('agendamiento.usuario', 'usuario')
-      .innerJoinAndSelect('agendamiento.paciente', 'paciente')
-      .where('usuario.id_usuario = :id', { id })
-      .andWhere('agendamiento.fecha_consulta = :date', { date: date })
-      .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
-        demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
-      })
-      .getMany();
+  // async findEnabledAgendaByProfessional(id: string, date: string) {
+  //   const agendamiento = await this.agendamientoRepository
+  //     .createQueryBuilder('agendamiento')
+  //     .innerJoinAndSelect('agendamiento.usuario', 'usuario')
+  //     .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+  //     .where('usuario.id_usuario = :id', { id })
+  //     .andWhere('agendamiento.fecha_consulta = :date', { date: date })
+  //     .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
+  //       demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
+  //     })
+  //     .getMany();
 
-    return agendamiento;
-  }
+  //   return agendamiento;
+  // }
 
   async findByProfessionalAndDate(id: string, date: string) {
     const agendamiento = await this.agendamientoRepository
@@ -128,6 +134,7 @@ export class AgendamientoService {
       .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
         demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
       })
+      .orderBy('hora_consulta', 'ASC')
       .getMany();
 
     return agendamiento;
@@ -160,7 +167,7 @@ export class AgendamientoService {
       .createQueryBuilder('agendamiento')
       .innerJoin('agendamiento.consulta', 'consulta')
       .select([
-        'DATE(agendamiento.fecha_agenda) AS dia',
+        'DATE(agendamiento.fecha_consulta) AS dia',
         'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
       ])
       .where('agendamiento.fecha_agenda >= :limitDate', { limitDate })
