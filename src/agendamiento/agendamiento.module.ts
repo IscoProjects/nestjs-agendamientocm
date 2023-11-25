@@ -5,11 +5,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Agendamiento } from './entities/agendamiento.entity';
 import { ErrorHandleDBService } from '../common/services/errorHandleDBException';
 import { UsuarioModule } from '../usuario/usuario.module';
+import { AgendamientosWsService } from 'src/agendamientos-ws/agendamientos-ws.service';
+import { AgendamientosWsModule } from 'src/agendamientos-ws/agendamientos-ws.module';
+import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.gateway';
 
 @Module({
   controllers: [AgendamientoController],
-  providers: [AgendamientoService, ErrorHandleDBService],
-  imports: [TypeOrmModule.forFeature([Agendamiento]), UsuarioModule],
+  providers: [
+    AgendamientoService,
+    ErrorHandleDBService,
+    AgendamientosWsService,
+    AgendamientosWsGateway,
+  ],
+  imports: [
+    TypeOrmModule.forFeature([Agendamiento]),
+    UsuarioModule,
+    AgendamientosWsModule,
+  ],
   exports: [TypeOrmModule],
 })
 export class AgendamientoModule {}

@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Repository } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
+import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.gateway';
 
 @Injectable()
 export class AgendamientoService {
@@ -13,6 +14,7 @@ export class AgendamientoService {
     @InjectRepository(Agendamiento)
     private readonly agendamientoRepository: Repository<Agendamiento>,
     private readonly errorHandleDBException: ErrorHandleDBService,
+    private readonly agendamientosWsGateway: AgendamientosWsGateway,
   ) {}
 
   async create(createAgendamientoDto: CreateAgendamientoDto) {
@@ -21,6 +23,7 @@ export class AgendamientoService {
         createAgendamientoDto,
       );
       await this.agendamientoRepository.save(agendamiento);
+      this.agendamientosWsGateway.sendAgendamiento(agendamiento);
       return agendamiento;
     } catch (error) {
       this.errorHandleDBException.errorHandleDBException(error);

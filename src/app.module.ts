@@ -9,6 +9,7 @@ import { CommonModule } from './common/common.module';
 import { SeccionModule } from './seccion/seccion.module';
 import { AreaModule } from './area/area.module';
 import { EstacionTrabajoModule } from './estacion-trabajo/estacion-trabajo.module';
+import { AgendamientosWsModule } from './agendamientos-ws/agendamientos-ws.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { EstacionTrabajoModule } from './estacion-trabajo/estacion-trabajo.modul
     SeccionModule,
     AreaModule,
     EstacionTrabajoModule,
+    AgendamientosWsModule,
   ],
   controllers: [],
   providers: [],
