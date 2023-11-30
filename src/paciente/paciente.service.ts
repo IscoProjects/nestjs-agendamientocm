@@ -5,7 +5,6 @@ import { CreatePacienteDto } from './dto/create-paciente.dto';
 import { UpdatePacienteDto } from './dto/update-paciente.dto';
 import { Paciente } from './entities/paciente.entity';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 
 @Injectable()
@@ -26,12 +25,8 @@ export class PacienteService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 25, offset = 0 } = paginationDto;
-
+  async findAll() {
     const paciente = await this.pacienteRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         agendamiento: {
           consulta: true,

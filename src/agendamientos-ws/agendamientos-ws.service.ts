@@ -14,7 +14,7 @@ interface ConnectedClients {
 @Injectable()
 export class AgendamientosWsService {
   private connectedClients: ConnectedClients = {};
-  private userIdToClientIds: { [id_usuario: string]: string[] } = {};
+  private userIdToClientId: { [id_usuario: string]: string } = {};
 
   constructor(
     @InjectRepository(Usuario)
@@ -36,21 +36,19 @@ export class AgendamientosWsService {
       id_usuario: user.id_usuario,
     };
 
-    if (this.userIdToClientIds[user.id_usuario]) {
-      this.userIdToClientIds[user.id_usuario].push(client.id);
-    } else {
-      this.userIdToClientIds[user.id_usuario] = [client.id];
-    }
+    this.connectedClients[client.id] = {
+      socket: client,
+      id_usuario: user.id_usuario,
+    };
+
+    this.userIdToClientId[user.id_usuario] = client.id;
   }
 
   removeClient(clientId: string) {
     const client = this.connectedClients[clientId];
 
     if (client) {
-      const index = this.userIdToClientIds[client.id_usuario].indexOf(clientId);
-      if (index > -1) {
-        this.userIdToClientIds[client.id_usuario].splice(index, 1);
-      }
+      delete this.userIdToClientId[client.id_usuario];
     }
     delete this.connectedClients[clientId];
   }
@@ -64,7 +62,7 @@ export class AgendamientosWsService {
   }
 
   getClientByUserId(id_usuario: string) {
-    const clientIds = this.userIdToClientIds[id_usuario];
-    return clientIds.map((id) => this.connectedClients[id]);
+    const clientId = this.userIdToClientId[id_usuario];
+    return this.connectedClients[clientId];
   }
 }

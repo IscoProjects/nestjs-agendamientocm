@@ -6,13 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { PacienteService } from './paciente.service';
 import { CreatePacienteDto } from './dto/create-paciente.dto';
 import { UpdatePacienteDto } from './dto/update-paciente.dto';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import {
@@ -62,8 +60,8 @@ export class PacienteController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.pacienteService.findAll(paginationDto);
+  findAll() {
+    return this.pacienteService.findAll();
   }
 
   @Get('metadata/:term')

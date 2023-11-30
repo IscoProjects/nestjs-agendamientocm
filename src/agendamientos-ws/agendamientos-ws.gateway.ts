@@ -34,21 +34,10 @@ export class AgendamientosWsGateway
       client.disconnect();
       return;
     }
-
-    console.log(
-      'Nro. Usuarios conectados:',
-      this.agendamientosWsService.getConnectedClients().length,
-      this.agendamientosWsService.getConnectedClients(),
-    );
   }
 
   handleDisconnect(client: Socket) {
     this.agendamientosWsService.removeClient(client.id);
-    console.log(
-      'Nro. Usuarios conectados:',
-      this.agendamientosWsService.getConnectedClients().length,
-      this.agendamientosWsService.getConnectedClients(),
-    );
   }
 
   sendAgendamiento(agendamiento) {
@@ -58,15 +47,10 @@ export class AgendamientosWsGateway
 
     if (dateString === appointmentDate) {
       const userId = agendamiento.usuario;
-
-      const clients = this.agendamientosWsService.getClientByUserId(userId);
-      console.log(clients);
-
-      clients.forEach((client) => {
-        if (client && client.socket.connected) {
-          client.socket.emit('agendamiento', agendamiento);
-        }
-      });
+      const client = this.agendamientosWsService.getClientByUserId(userId);
+      if (client && client.socket.connected) {
+        client.socket.emit('agendamiento', agendamiento);
+      }
     }
   }
 }
