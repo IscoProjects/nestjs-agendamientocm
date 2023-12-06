@@ -75,7 +75,6 @@ export class SeccionService {
     return seccion;
   }
 
-  //Buscar secciones que pertenecen a un Area
   async findByArea(term: string) {
     const seccion = await this.seccionRepository
       .createQueryBuilder('seccion')

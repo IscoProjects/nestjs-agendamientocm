@@ -111,21 +111,6 @@ export class AgendamientoService {
     return agendamiento;
   }
 
-  // async findEnabledAgendaByProfessional(id: string, date: string) {
-  //   const agendamiento = await this.agendamientoRepository
-  //     .createQueryBuilder('agendamiento')
-  //     .innerJoinAndSelect('agendamiento.usuario', 'usuario')
-  //     .innerJoinAndSelect('agendamiento.paciente', 'paciente')
-  //     .where('usuario.id_usuario = :id', { id })
-  //     .andWhere('agendamiento.fecha_consulta = :date', { date: date })
-  //     .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
-  //       demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
-  //     })
-  //     .getMany();
-
-  //   return agendamiento;
-  // }
-
   async findByProfessionalAndDate(id: string, date: string) {
     const agendamiento = await this.agendamientoRepository
       .createQueryBuilder('agendamiento')
