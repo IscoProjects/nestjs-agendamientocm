@@ -36,11 +36,6 @@ export class AgendamientosWsService {
       id_usuario: user.id_usuario,
     };
 
-    this.connectedClients[client.id] = {
-      socket: client,
-      id_usuario: user.id_usuario,
-    };
-
     this.userIdToClientId[user.id_usuario] = client.id;
   }
 
