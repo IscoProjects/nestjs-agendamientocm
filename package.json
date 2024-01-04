@@ -1,8 +1,8 @@
 {
   "name": "nestjs-agendamientocm",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "Api REST Resource",
+  "author": "Eproject",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
