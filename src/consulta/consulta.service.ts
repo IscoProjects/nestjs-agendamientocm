@@ -5,7 +5,6 @@ import { UpdateConsultaDto } from './dto/update-consulta.dto';
 import { Consulta } from './entities/consulta.entity';
 import { Repository } from 'typeorm';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 
 @Injectable()
 export class ConsultaService {
@@ -24,12 +23,8 @@ export class ConsultaService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 25, offset = 0 } = paginationDto;
-
+  async findAll() {
     const consulta = await this.consultaRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         agendamiento: true,
       },

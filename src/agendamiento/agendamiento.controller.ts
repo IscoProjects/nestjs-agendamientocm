@@ -11,8 +11,6 @@ import {
 import { AgendamientoService } from './agendamiento.service';
 import { Auth } from 'src/usuario/decorators/auth.decorator';
 import { CreateAgendamientoDto } from './dto/create-agendamiento.dto';
-import { PaginationDto } from '../common/dtos/pagination.dto';
-import { Query } from '@nestjs/common/decorators';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
 import { UserRoles } from 'src/usuario/interfaces/user-roles.interface';
 import {
@@ -63,8 +61,8 @@ export class AgendamientoController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.agendamientoService.findAll(paginationDto);
+  findAll() {
+    return this.agendamientoService.findAll();
   }
 
   @Get('searchByID/:id')

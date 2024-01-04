@@ -6,10 +6,8 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ConsultaService } from './consulta.service';
 import { CreateConsultaDto } from './dto/create-consulta.dto';
 import { UpdateConsultaDto } from './dto/update-consulta.dto';
@@ -62,8 +60,8 @@ export class ConsultaController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.consultaService.findAll(paginationDto);
+  findAll() {
+    return this.consultaService.findAll();
   }
 
   @Get('search/:id')

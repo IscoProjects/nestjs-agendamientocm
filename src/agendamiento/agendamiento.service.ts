@@ -3,7 +3,6 @@ import { CreateAgendamientoDto } from './dto/create-agendamiento.dto';
 import { ErrorHandleDBService } from 'src/common/services/errorHandleDBException';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Repository } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
 import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.gateway';
@@ -30,12 +29,8 @@ export class AgendamientoService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 25, offset = 0 } = paginationDto;
-
+  async findAll() {
     const agendamiento = await this.agendamientoRepository.find({
-      take: limit,
-      skip: offset,
       relations: {
         paciente: true,
         consulta: true,
