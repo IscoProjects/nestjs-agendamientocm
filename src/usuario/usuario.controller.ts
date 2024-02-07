@@ -258,7 +258,7 @@ export class UsuarioController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  updatePasswor(
+  updatePassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
   ) {
