@@ -8,6 +8,7 @@ import { UsuarioModule } from '../usuario/usuario.module';
 import { AgendamientosWsService } from 'src/agendamientos-ws/agendamientos-ws.service';
 import { AgendamientosWsModule } from 'src/agendamientos-ws/agendamientos-ws.module';
 import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.gateway';
+import { DateTimeService } from 'src/common/services/date-time/date-time.service';
 
 @Module({
   controllers: [AgendamientoController],
@@ -16,6 +17,7 @@ import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.ga
     ErrorHandleDBService,
     AgendamientosWsService,
     AgendamientosWsGateway,
+    DateTimeService,
   ],
   imports: [
     TypeOrmModule.forFeature([Agendamiento]),

@@ -70,7 +70,17 @@ export class Agendamiento {
   canal_agenda: string;
 
   @ApiProperty({
-    example: 'Interconsulta',
+    example: 'Consulta',
+    description: 'Scheduling type',
+  })
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  tipo_agenda: string;
+
+  @ApiProperty({
+    example: 'Agendada',
     description: 'Scheduling detail',
   })
   @Column({
@@ -87,9 +97,8 @@ export class Agendamiento {
   @Column({
     type: 'timestamp with time zone',
     nullable: false,
-    default: () => 'NOW()',
   })
-  fecha_agenda: Date;
+  fecha_agenda: string;
 
   @ApiProperty({
     example: '2023-10-25',

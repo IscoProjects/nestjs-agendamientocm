@@ -41,6 +41,7 @@ export class PacienteService {
     const paciente = await this.pacienteRepository
       .createQueryBuilder('paciente')
       .leftJoinAndSelect('paciente.agendamiento', 'agendamiento')
+      .leftJoinAndSelect('agendamiento.usuario', 'usuario')
       .leftJoinAndSelect('agendamiento.consulta', 'consulta')
       .where((qb) => {
         if (isUUID(term)) {

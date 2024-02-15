@@ -36,6 +36,13 @@ export class CreateAgendamientoDto {
   canal_agenda: string;
 
   @ApiProperty({
+    description: 'Scheduling type',
+    nullable: false,
+  })
+  @IsString()
+  tipo_agenda: string;
+
+  @ApiProperty({
     description: 'Scheduling detail',
     nullable: false,
   })
@@ -47,10 +54,17 @@ export class CreateAgendamientoDto {
     nullable: false,
   })
   @IsDateString()
+  fecha_agenda: string;
+
+  @ApiProperty({
+    description: 'Appointment date',
+    nullable: false,
+  })
+  @IsDateString()
   fecha_consulta: string;
 
   @ApiProperty({
-    description: 'Scheduling time',
+    description: 'Appointment time',
     nullable: false,
     type: 'string',
   })
@@ -58,7 +72,7 @@ export class CreateAgendamientoDto {
   hora_consulta: Date;
 
   @ApiProperty({
-    description: 'Scheduling duration',
+    description: 'Appointment duration',
     nullable: false,
     type: 'integer',
   })

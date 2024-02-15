@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateAgendamientoDto } from './dto/update-agendamiento.dto';
 import { AgendamientosWsGateway } from 'src/agendamientos-ws/agendamientos-ws.gateway';
+import { DateTimeService } from 'src/common/services/date-time/date-time.service';
 
 @Injectable()
 export class AgendamientoService {
@@ -14,6 +15,7 @@ export class AgendamientoService {
     private readonly agendamientoRepository: Repository<Agendamiento>,
     private readonly errorHandleDBException: ErrorHandleDBService,
     private readonly agendamientosWsGateway: AgendamientosWsGateway,
+    private readonly dateTimeService: DateTimeService,
   ) {}
 
   async create(createAgendamientoDto: CreateAgendamientoDto) {
@@ -22,7 +24,11 @@ export class AgendamientoService {
         createAgendamientoDto,
       );
       await this.agendamientoRepository.save(agendamiento);
-      this.agendamientosWsGateway.sendAgendamiento(agendamiento);
+      if (
+        agendamiento.fecha_consulta === this.dateTimeService.getCurrentDate()
+      ) {
+        this.agendamientosWsGateway.sendAgendamiento(agendamiento);
+      }
       return agendamiento;
     } catch (error) {
       this.errorHandleDBException.errorHandleDBException(error);
@@ -61,6 +67,9 @@ export class AgendamientoService {
       .innerJoinAndSelect('agendamiento.usuario', 'usuario')
       .innerJoinAndSelect('agendamiento.paciente', 'paciente')
       .where('usuario.id_usuario = :id', { id })
+      .andWhere('agendamiento.detalle_agenda NOT IN (:...demanda)', {
+        demanda: ['Cancelado', 'DNA'],
+      })
       .getMany();
 
     return agendamiento;
@@ -76,8 +85,8 @@ export class AgendamientoService {
       .leftJoinAndSelect('estacion_trabajo.seccion', 'seccion')
       .where('usuario.id_usuario = :id', { id: id })
       .andWhere('agendamiento.fecha_consulta = :date', { date: date })
-      .andWhere('agendamiento.detalle_agenda IN (:...demandaAgendada)', {
-        demandaAgendada: ['Consulta', 'Interconsulta', 'Reagendado'],
+      .andWhere('agendamiento.detalle_agenda NOT IN (:...demanda)', {
+        demanda: ['Cancelado', 'DNA'],
       })
       .orderBy('hora_consulta', 'ASC')
       .getMany();
@@ -100,6 +109,9 @@ export class AgendamientoService {
         startDate,
         endDate,
       })
+      .andWhere('agendamiento.detalle_agenda NOT IN (:...demanda)', {
+        demanda: ['Cancelado', 'DNA'],
+      })
       .getMany();
 
     return agendamiento;
@@ -115,6 +127,9 @@ export class AgendamientoService {
         startDate: startDate,
       })
       .andWhere('agendamiento.fecha_consulta <= :endDate', { endDate: endDate })
+      .andWhere('agendamiento.detalle_agenda NOT IN (:...demanda)', {
+        demanda: ['Cancelado', 'DNA'],
+      })
       .getMany();
 
     return agendamiento;
@@ -134,6 +149,7 @@ export class AgendamientoService {
       .select([
         'DATE(agendamiento.fecha_consulta) AS dia',
         'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
+        'COUNT(consulta.id_consulta) AS total_turnos',
       ])
       .where('agendamiento.fecha_agenda >= :limitDate', { limitDate })
       .andWhere('consulta.hora_registro IS NOT NULL')
@@ -144,18 +160,65 @@ export class AgendamientoService {
     return promediosPorDia.map((item) => ({
       dia: item.dia,
       tiempo_espera_promedio: parseFloat(item.tiempo_espera_promedio) || 0,
+      total_turnos: item.total_turnos,
     }));
   }
 
-  async update(id: string, updateAgendamientoDto: UpdateAgendamientoDto) {
+  async updateStatus(id: string, updateAgendamientoDto: UpdateAgendamientoDto) {
     const agendamiento = await this.agendamientoRepository.preload({
       id_agendamiento: id,
       ...updateAgendamientoDto,
     });
+
     if (!agendamiento)
       throw new NotFoundException(`Agendamiento con ID: ${id} no encontrado`);
     try {
       await this.agendamientoRepository.save(agendamiento);
+      return agendamiento;
+    } catch (error) {
+      this.errorHandleDBException.errorHandleDBException(error);
+    }
+  }
+
+  async update(id: string, updateAgendamientoDto: UpdateAgendamientoDto) {
+    const findUser = await this.agendamientoRepository.findOne({
+      where: {
+        id_agendamiento: id,
+      },
+      relations: {
+        usuario: true,
+      },
+      select: {
+        id_agendamiento: true,
+        fecha_consulta: true,
+        usuario: {
+          id_usuario: true,
+        },
+      },
+    });
+
+    const agendamiento = await this.agendamientoRepository.preload({
+      id_agendamiento: id,
+      ...updateAgendamientoDto,
+    });
+
+    if (!agendamiento)
+      throw new NotFoundException(`Agendamiento con ID: ${id} no encontrado`);
+    try {
+      await this.agendamientoRepository.save(agendamiento);
+
+      if (
+        findUser.fecha_consulta === this.dateTimeService.getCurrentDate() ||
+        agendamiento.fecha_consulta === this.dateTimeService.getCurrentDate()
+      ) {
+        const updateAgendamiento = {
+          ...agendamiento,
+          usuario: findUser.usuario.id_usuario,
+        };
+
+        this.agendamientosWsGateway.sendAgendamiento(updateAgendamiento);
+      }
+
       return agendamiento;
     } catch (error) {
       this.errorHandleDBException.errorHandleDBException(error);

@@ -235,6 +235,32 @@ export class AgendamientoController {
     return this.agendamientoService.getAVGWaitingTime(days);
   }
 
+  @Patch('update-status/:id')
+  @Auth(UserRoles.Agendador, UserRoles.Medico)
+  @ApiOperation({
+    summary: 'Update a schedule status by its ID',
+    description: 'Actualizar el estado de agendamiento por su ID',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Schedule ID',
+    example: '44cb3359-270a-483b-8011-23bc75b0b2de',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Ok',
+    type: Agendamiento,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateAgendamientoDto: UpdateAgendamientoDto,
+  ) {
+    return this.agendamientoService.updateStatus(id, updateAgendamientoDto);
+  }
+
   @Patch('update/:id')
   @Auth(UserRoles.Agendador, UserRoles.Medico)
   @ApiOperation({

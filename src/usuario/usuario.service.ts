@@ -119,6 +119,7 @@ export class UsuarioService {
       .select([
         'DATE(agendamiento.fecha_consulta) AS dia',
         'AVG(consulta.tiempo_espera) AS tiempo_espera_promedio',
+        'COUNT(consulta.id_consulta) AS total_turnos',
       ])
       .where('usuario.id_usuario = :id', { id })
       .andWhere('agendamiento.fecha_agenda >= :limitDate', { limitDate })
@@ -130,6 +131,7 @@ export class UsuarioService {
     return promediosPorDia.map((item) => ({
       dia: item.dia,
       tiempo_espera_promedio: parseFloat(item.tiempo_espera_promedio) || 0,
+      total_turnos: item.total_turnos,
     }));
   }
 

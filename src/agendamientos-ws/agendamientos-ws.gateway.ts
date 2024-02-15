@@ -8,6 +8,7 @@ import { AgendamientosWsService } from './agendamientos-ws.service';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/usuario/interfaces/jwt-payload.interface';
+import * as moment from 'moment-timezone';
 
 @WebSocketGateway({ cors: true })
 export class AgendamientosWsGateway
@@ -18,7 +19,9 @@ export class AgendamientosWsGateway
   constructor(
     private readonly agendamientosWsService: AgendamientosWsService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    moment.tz.setDefault('America/Guayaquil');
+  }
 
   async handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
@@ -41,16 +44,11 @@ export class AgendamientosWsGateway
   }
 
   sendAgendamiento(agendamiento) {
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
-    const appointmentDate = agendamiento.fecha_consulta;
+    const userId = agendamiento.usuario;
+    const client = this.agendamientosWsService.getClientByUserId(userId);
 
-    if (dateString === appointmentDate) {
-      const userId = agendamiento.usuario;
-      const client = this.agendamientosWsService.getClientByUserId(userId);
-      if (client && client.socket.connected) {
-        client.socket.emit('agendamiento', agendamiento);
-      }
+    if (client && client.socket.connected) {
+      client.socket.emit('agendamiento', agendamiento);
     }
   }
 }
