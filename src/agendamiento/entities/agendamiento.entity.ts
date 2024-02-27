@@ -95,7 +95,7 @@ export class Agendamiento {
     default: 'Creation date',
   })
   @Column({
-    type: 'timestamp with time zone',
+    type: 'timestamp without time zone',
     nullable: false,
   })
   fecha_agenda: string;

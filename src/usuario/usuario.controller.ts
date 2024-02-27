@@ -171,8 +171,8 @@ export class UsuarioController {
   @Get('user-verify/:term')
   @Auth(UserRoles.Administrador, UserRoles.Agendador, UserRoles.Medico)
   @ApiOperation({
-    summary: 'Get a Professional by its user (alias)',
-    description: 'Obtener un Profesional por su usuario (alias)',
+    summary: 'Verify if a Professional exists by user alias',
+    description: 'Verificar si un Profesional existe por su alias de usuario',
   })
   @ApiParam({
     name: 'term',
