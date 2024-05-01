@@ -196,6 +196,7 @@ export class UsuarioService {
       us_password,
       user.us_password,
     );
+
     if (!passwordMatch) {
       throw new UnauthorizedException('Credenciales no válidas');
     }

@@ -13,6 +13,7 @@ export class ConsultaService {
     private readonly consultaRepository: Repository<Consulta>,
     private readonly errorHandleDBException: ErrorHandleDBService,
   ) {}
+
   async create(createConsultaDto: CreateConsultaDto) {
     try {
       const consulta = this.consultaRepository.create(createConsultaDto);

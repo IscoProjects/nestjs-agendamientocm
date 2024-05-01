@@ -13,7 +13,6 @@ export class CreatePacienteDto {
     nullable: false,
   })
   @IsString()
-  @IsString()
   @MinLength(8)
   @MaxLength(12)
   pac_cedula: string;
