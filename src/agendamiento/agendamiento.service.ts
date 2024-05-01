@@ -135,6 +135,30 @@ export class AgendamientoService {
     return agendamiento;
   }
 
+  async findByDateAndTimeRange(
+    date: string,
+    startTime: string,
+    endTime: string,
+  ) {
+    const agendamiento = await this.agendamientoRepository
+      .createQueryBuilder('agendamiento')
+      .innerJoinAndSelect('agendamiento.usuario', 'usuario')
+      .innerJoinAndSelect('usuario.estacion_trabajo', 'estacion_trabajo')
+      .innerJoinAndSelect('estacion_trabajo.seccion', 'seccion')
+      .innerJoinAndSelect('agendamiento.paciente', 'paciente')
+      .where('agendamiento.fecha_consulta = :date', { date })
+      .andWhere('agendamiento.hora_consulta BETWEEN :startTime AND :endTime', {
+        startTime,
+        endTime,
+      })
+      .andWhere('agendamiento.detalle_agenda NOT IN (:...demanda)', {
+        demanda: ['Cancelado', 'DNA'],
+      })
+      .getMany();
+
+    return agendamiento;
+  }
+
   async getAVGWaitingTime(days: number) {
     const startDate = new Date();
     startDate.setHours(0, 0, 0, 0);
