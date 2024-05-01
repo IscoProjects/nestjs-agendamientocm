@@ -211,45 +211,6 @@ export class AgendamientoController {
     return this.agendamientoService.findBetweenDates(startDate, endDate);
   }
 
-  @Get('searchByDateAndTimeRange/:date/:startTime/:endTime')
-  @ApiOperation({
-    summary: 'Get all schedules by date ang time range',
-    description: 'Obtener todos los agendamientos por día y rangos de tiempo',
-  })
-  @ApiParam({
-    name: 'date',
-    description: 'Date',
-    example: '2024-06-03',
-  })
-  @ApiParam({
-    name: 'startTime',
-    description: 'Start Time',
-    example: '08:00:00',
-  })
-  @ApiParam({
-    name: 'endTIme',
-    description: 'End Time',
-    example: '08:00:00',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Ok',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  findByDateAndTimeRange(
-    @Param('date') date: string,
-    @Param('startTime') startTime: string,
-    @Param('endTime') endTime: string,
-  ) {
-    return this.agendamientoService.findByDateAndTimeRange(
-      date,
-      startTime,
-      endTime,
-    );
-  }
-
   @Get('avgWaitingTime/:days')
   @Auth(UserRoles.Agendador, UserRoles.Administrador, UserRoles.Medico)
   @ApiOperation({
